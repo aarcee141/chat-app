@@ -1,0 +1,22 @@
+{
+  "name": "login-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --project ./",
+    "start": "npx nodemon",
+    "release": "mkdir -p build && tsc --project ./ && npx pkg ./js/index.js && mv index-linux index-macos index-win.exe ./build",
+    "lint": "eslint . --ext .ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.3"
+  }
+}
