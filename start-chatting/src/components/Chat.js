@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import firebase from "firebase/compat/app";
 import axios from "axios";
+import useWebSocket, { ReadyState } from 'react-use-websocket';
+
 
 function Chat() {
   const [users, setUsers] = useState([]);
@@ -10,12 +11,26 @@ function Chat() {
   const [messages, setMessages] = useState(
     JSON.parse(localStorage.getItem("messages")) || {}
   );
+  const [messageHistory, setMessageHistory] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const navigate = useNavigate();
   const auth = firebase.auth();
   const user = auth.currentUser;
+  const [socket, setSocket] = useState('ws://localhost:8080/echo');
+  const [messageId, setMessageId] = useState(0);
 
-  console.log(auth);
+  const subscribeRequest = {
+    from: user.email,
+    messageType: 'subscribe',
+  };
+
+  const [messageRequest, setMessageRequest] = useState({});
+
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socket, {
+    onOpen: () => sendMessage(JSON.stringify(subscribeRequest))
+  });
+
+  // console.log(auth);
 
   useEffect(() => {
     async function getUsers() {
@@ -66,10 +81,72 @@ function Chat() {
         sender: user.email,
         text: newMessage,
       });
+      setMessageId(messageId + 1)
+      setMessageRequest({
+        from: user.email,
+        to: selectedUser.email,
+        message: newMessage,
+        messageType: "message",
+        messageId: messageId
+      });
       setMessages(newMessages);
       setNewMessage("");
     }
   }
+
+  function handleDeleteMessages(event) {
+    event.preventDefault();
+    if (selectedUser) {
+      const newMessages = { ...messages };
+      if (!newMessages[selectedUser.email]) {
+        newMessages[selectedUser.email] = [];
+      }
+      newMessages[selectedUser.email] = []
+      setMessages(newMessages);
+    }
+  }
+
+  useEffect(() => {
+    if (selectedUser && newMessage) {
+      setMessageRequest({
+        from: user.email,
+        to: selectedUser.email,
+        message: newMessage,
+        messageType: "message",
+        messageId: messageId
+      });
+    }
+  }, [messageId]);
+
+  useEffect(() => {
+    if (messageRequest != {}) {
+      console.log(messageRequest)
+      sendMessage(JSON.stringify(messageRequest));
+    }
+  }, [messageRequest]);
+
+  useEffect(() => {
+    console.log(lastMessage)
+    if (lastMessage !== null) {
+      var data = lastMessage.data;
+      var splitData = data.split('$')
+      const newMessages = { ...messages };
+      newMessages[splitData[1]].push({
+        sender: splitData[1],
+        text: splitData[0],
+      });
+      setMessages(newMessages);
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage, setMessageHistory]);
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: 'Connecting',
+    [ReadyState.OPEN]: 'Connected',
+    [ReadyState.CLOSING]: 'Closing',
+    [ReadyState.CLOSED]: 'Closed',
+    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+  }[readyState];
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
@@ -171,8 +248,23 @@ function Chat() {
               Send
             </button>
           </form>
+          <form onSubmit={handleDeleteMessages}>
+            <button
+              type="submit"
+              style={{
+                backgroundColor: "#f05b6a",
+                color: "white",
+                padding: "10px",
+                border: "none",
+                borderRadius: "5px",
+              }}
+            >
+              Delete chat
+            </button>
+          </form>
         </div>
       )}
+      <span>The Chat server is currently {connectionStatus}</span>
     </div>
   );
 }

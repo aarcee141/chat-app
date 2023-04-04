@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Chat from "./Chat";
 
 function Login() {
   const firebaseConfig = {
@@ -73,9 +74,10 @@ function Login() {
         {user ? `You are logged in as ${user.email}` : "You are not logged in"}
       </p>
       {user ? (
-        <button onClick={handleLogout} className="btn-primary">
-          Log out
-        </button>
+        <Chat/>
+        // <button onClick={handleLogout} className="btn-primary">
+        //   Log out
+        // </button>
       ) : (
         <button onClick={handleLogin} className="btn-primary">
           Log in with Google
