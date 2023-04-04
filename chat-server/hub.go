@@ -36,10 +36,8 @@ func (h *Hub) run() {
 			}
 		case m := <-h.unicast:
 			if client, ok := h.clients[m.to]; ok {
-				finalMessage := append(m.message, []byte("$")...)
-				finalMessage = append(finalMessage, []byte(m.from)...)
 				select {
-				case client.send <- finalMessage:
+				case client.send <- []byte(m.message):
 				default:
 					close(client.send)
 					delete(h.clients, client.email)

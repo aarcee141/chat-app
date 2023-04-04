@@ -18,6 +18,7 @@ function Chat() {
   const user = auth.currentUser;
   const [socket, setSocket] = useState('ws://localhost:8080/echo');
   const [messageId, setMessageId] = useState(0);
+  const [activeUsers, setActiveUsers] = useState([]);
 
   const subscribeRequest = {
     from: user.email,
@@ -120,21 +121,20 @@ function Chat() {
 
   useEffect(() => {
     if (messageRequest != {}) {
-      console.log(messageRequest)
       sendMessage(JSON.stringify(messageRequest));
     }
   }, [messageRequest]);
 
   useEffect(() => {
     console.log(lastMessage)
-    if (lastMessage !== null) {
-      var data = lastMessage.data;
-      var splitData = data.split('$')
+    if (lastMessage != null && lastMessage.data.length > 0) {
+      var data = JSON.parse(lastMessage.data)
       const newMessages = { ...messages };
-      newMessages[splitData[1]].push({
-        sender: splitData[1],
-        text: splitData[0],
+      newMessages[data.from].push({
+        sender: data.from,
+        text: data.message,
       });
+      setActiveUsers(data.activeUsers);
       setMessages(newMessages);
       setMessageHistory((prev) => prev.concat(lastMessage));
     }
@@ -160,9 +160,8 @@ function Chat() {
                 cursor: "pointer",
                 padding: "10px",
                 backgroundColor:
-                  selectedUser && u.email === selectedUser.email
-                    ? "#e0e0e0"
-                    : "inherit",
+                  selectedUser && u.email === selectedUser.email ? "#e0e0e0" : "inherit",
+                borderRight: activeUsers.includes(u.email) ? "5px solid green" : "none",
               }}
               onClick={() => handleUserClick(u)}
             >

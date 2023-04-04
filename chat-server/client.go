@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -58,11 +57,12 @@ type Message struct {
 	from string
 
 	// Message to be sent to the receiver.
-	message []byte
+	message string
 
 	// MessageType
 	// 1. Subscribe
 	// 2. Message
+	// 3. Presence
 	messageType string
 
 	messageId int64
@@ -86,9 +86,6 @@ func (c *Client) readPump() {
 		}
 		mess := string(message)
 
-		fmt.Println(mess)
-
-		var message1 Message
 		var objmap map[string]json.RawMessage
 		err = json.Unmarshal([]byte(mess), &objmap)
 		if err != nil {
@@ -118,10 +115,26 @@ func (c *Client) readPump() {
 			continue
 		}
 
-		processedMessage, ok := objmap["message"]
+		userArr := make([]interface{}, 0, len(c.hub.clients))
+		for key := range c.hub.clients {
+			userArr = append(userArr, key)
+		}
+
+		activeUsers, err := json.Marshal(userArr)
+		if err != nil {
+			log.Printf("error: %v", err)
+		}
+
+		objmap["activeUsers"] = activeUsers
+
+		finalMessage, err := json.Marshal(objmap)
+		if err != nil {
+			log.Printf("error: %v", err)
+		}
+
+		_, ok = objmap["message"]
 		if ok {
-			processedMessage = processedMessage[1 : len(processedMessage)-1]
-			message1 = Message{to: toString, from: fromString, message: processedMessage}
+			message1 := Message{to: toString, from: fromString, message: string(finalMessage)}
 			c.hub.unicast <- &message1
 		}
 	}
