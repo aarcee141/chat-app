@@ -88,7 +88,7 @@ function Chat() {
         to: selectedUser.email,
         message: newMessage,
         messageType: "message",
-        messageId: messageId
+        clientMessageId: String(Date.now() + "$" + messageId)
       });
       setMessages(newMessages);
       setNewMessage("");
@@ -108,18 +108,6 @@ function Chat() {
   }
 
   useEffect(() => {
-    if (selectedUser && newMessage) {
-      setMessageRequest({
-        from: user.email,
-        to: selectedUser.email,
-        message: newMessage,
-        messageType: "message",
-        messageId: messageId
-      });
-    }
-  }, [messageId]);
-
-  useEffect(() => {
     if (messageRequest != {}) {
       sendMessage(JSON.stringify(messageRequest));
     }
@@ -129,14 +117,22 @@ function Chat() {
     console.log(lastMessage)
     if (lastMessage != null && lastMessage.data.length > 0) {
       var data = JSON.parse(lastMessage.data)
-      const newMessages = { ...messages };
-      newMessages[data.from].push({
-        sender: data.from,
-        text: data.message,
-      });
-      setActiveUsers(data.activeUsers);
-      setMessages(newMessages);
-      setMessageHistory((prev) => prev.concat(lastMessage));
+      if (data.messageType == "message") {
+        const newMessages = { ...messages };
+        newMessages[data.from].push({
+          sender: data.from,
+          text: data.message,
+        });
+        setActiveUsers(data.activeUsers);
+        setMessages(newMessages);
+        setMessageHistory((prev) => prev.concat(lastMessage));
+      } else if (data.messageType == "subscribe") {
+        setActiveUsers(data.activeUsers);
+      } else if (data.messageType == "status") {
+        // Do something useful with the status being pushed.
+        // The status for a message could be "sent" or "delivered".
+        console.log(data)
+      }
     }
   }, [lastMessage, setMessageHistory]);
 

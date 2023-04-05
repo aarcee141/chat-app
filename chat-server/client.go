@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -46,26 +47,30 @@ type Client struct {
 	conn *websocket.Conn
 
 	// Buffered channel of outbound messages.
-	send chan []byte
+	send chan *Message
 }
 
 type Message struct {
 	// Sender's email address.
-	to string
+	To string `json:"to"`
 
 	// Receiver's email address.
-	from string
+	From string `json:"from"`
 
 	// Message to be sent to the receiver.
-	message string
+	Message string `json:"message"`
 
 	// MessageType
-	// 1. Subscribe
-	// 2. Message
-	// 3. Presence
-	messageType string
+	// 1. subscribe
+	// 2. message
+	// 3. presence
+	MessageType string `json:"messageType"`
 
-	messageId int64
+	// Sent, delivered, read.
+	StatusType string `json:"statusType"`
+
+	// Message Id unique for every client.
+	ClientMessageId string `json:"clientMessageId"`
 }
 
 func (c *Client) readPump() {
@@ -117,10 +122,12 @@ func (c *Client) readPump() {
 			log.Printf("error: %v", err)
 		}
 
+		// For messageType == Subscribe, we send a self notification message with the list of active users.
 		if string(objmap["messageType"]) == "\"subscribe\"" {
 			c.email = fromString
 			c.hub.register <- c
-			c.send <- finalMessage
+			// Message from User A -> server -> A.
+			c.send <- &Message{To: fromString, From: fromString, Message: string(finalMessage)}
 			continue
 		}
 
@@ -132,8 +139,49 @@ func (c *Client) readPump() {
 			continue
 		}
 
-		message1 := Message{to: toString, from: fromString, message: string(finalMessage)}
+		messageId, ok := objmap["clientMessageId"]
+		var mIdString string
+		if ok {
+			mIdString = string(messageId)[1 : len(string(messageId))-1]
+		} else {
+			continue
+		}
+
+		finalMessage, err = json.Marshal(objmap)
+		if err != nil {
+			log.Printf("error: %v", err)
+		}
+
+		// Message from User A -> server -> B.
+		message1 := Message{
+			To:              toString,
+			From:            fromString,
+			Message:         string(finalMessage),
+			ClientMessageId: mIdString,
+			MessageType:     "message"}
 		c.hub.unicast <- &message1
+
+		// "Sent" notification message to the client.
+		// Message from A -> server -> A
+		objmap["to"] = objmap["from"]
+		objmap["messageType"] = json.RawMessage("\"status\"")
+		objmap["statusType"] = json.RawMessage("\"sent\"")
+		delete(objmap, "message")
+
+		finalMessage, err = json.Marshal(objmap)
+		if err != nil {
+			log.Printf("error: %v", err)
+		}
+
+		messageSent := &Message{
+			To:              fromString,
+			From:            fromString,
+			MessageType:     "status",
+			StatusType:      "sent",
+			Message:         string(finalMessage),
+			ClientMessageId: mIdString,
+		}
+		c.send <- messageSent
 	}
 }
 
@@ -145,7 +193,7 @@ func (c *Client) writePump() {
 	}()
 	for {
 		select {
-		case message, ok := <-c.send:
+		case messageWithMetadata, ok := <-c.send:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The hub closed the channel.
@@ -156,9 +204,33 @@ func (c *Client) writePump() {
 			if err != nil {
 				return
 			}
-			w.Write(message)
+			message := messageWithMetadata.Message
+			w.Write([]byte(message))
 			if err := w.Close(); err != nil {
 				return
+			}
+
+			// Send a "delivered" notification back the client via the hub.
+			fmt.Println(messageWithMetadata)
+			if messageWithMetadata.MessageType == "message" {
+				message1 := &Message{
+					To:              messageWithMetadata.From,
+					From:            messageWithMetadata.From,
+					ClientMessageId: messageWithMetadata.ClientMessageId,
+					MessageType:     "status",
+					StatusType:      "delivered"}
+
+				messageString, err := json.Marshal(message1)
+				fmt.Println("message1: ", message1)
+				if err != nil {
+					log.Printf("error: %v", err)
+					return
+				}
+				fmt.Println("messageString: ", string(messageString))
+				message1.Message = string(messageString)
+				fmt.Println("apple: ", message1)
+
+				c.hub.unicast <- message1
 			}
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
@@ -176,7 +248,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
+	client := &Client{hub: hub, conn: conn, send: make(chan *Message)}
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
