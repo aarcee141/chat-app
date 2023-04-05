@@ -92,25 +92,11 @@ func (c *Client) readPump() {
 			log.Printf("error: %v", err)
 			continue
 		}
-		if string(objmap["messageType"]) == "\"subscribe\"" {
-			fromEmail := string(objmap["from"])
-			c.email = fromEmail[1 : len(fromEmail)-1]
-			c.hub.register <- c
-			continue
-		}
 
 		from, ok := objmap["from"]
 		var fromString string
 		if ok {
 			fromString = string(from)[1 : len(string(from))-1]
-		} else {
-			continue
-		}
-
-		to, ok := objmap["to"]
-		var toString string
-		if ok {
-			toString = string(to)[1 : len(string(to))-1]
 		} else {
 			continue
 		}
@@ -124,7 +110,6 @@ func (c *Client) readPump() {
 		if err != nil {
 			log.Printf("error: %v", err)
 		}
-
 		objmap["activeUsers"] = activeUsers
 
 		finalMessage, err := json.Marshal(objmap)
@@ -132,11 +117,23 @@ func (c *Client) readPump() {
 			log.Printf("error: %v", err)
 		}
 
-		_, ok = objmap["message"]
-		if ok {
-			message1 := Message{to: toString, from: fromString, message: string(finalMessage)}
-			c.hub.unicast <- &message1
+		if string(objmap["messageType"]) == "\"subscribe\"" {
+			c.email = fromString
+			c.hub.register <- c
+			c.send <- finalMessage
+			continue
 		}
+
+		to, ok := objmap["to"]
+		var toString string
+		if ok {
+			toString = string(to)[1 : len(string(to))-1]
+		} else {
+			continue
+		}
+
+		message1 := Message{to: toString, from: fromString, message: string(finalMessage)}
+		c.hub.unicast <- &message1
 	}
 }
 
