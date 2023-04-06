@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -71,6 +70,8 @@ type Message struct {
 
 	// Message Id unique for every client.
 	ClientMessageId string `json:"clientMessageId"`
+
+	ActiveUsers []string `json:"activeUsers"`
 }
 
 func (c *Client) readPump() {
@@ -106,20 +107,9 @@ func (c *Client) readPump() {
 			continue
 		}
 
-		userArr := make([]interface{}, 0, len(c.hub.clients))
+		activeUsers := make([]string, 0, len(c.hub.clients))
 		for key := range c.hub.clients {
-			userArr = append(userArr, key)
-		}
-
-		activeUsers, err := json.Marshal(userArr)
-		if err != nil {
-			log.Printf("error: %v", err)
-		}
-		objmap["activeUsers"] = activeUsers
-
-		finalMessage, err := json.Marshal(objmap)
-		if err != nil {
-			log.Printf("error: %v", err)
+			activeUsers = append(activeUsers, key)
 		}
 
 		// For messageType == Subscribe, we send a self notification message with the list of active users.
@@ -127,7 +117,11 @@ func (c *Client) readPump() {
 			c.email = fromString
 			c.hub.register <- c
 			// Message from User A -> server -> A.
-			c.send <- &Message{To: fromString, From: fromString, Message: string(finalMessage)}
+			c.send <- &Message{
+				To:          fromString,
+				From:        fromString,
+				MessageType: "subscribe",
+				ActiveUsers: activeUsers}
 			continue
 		}
 
@@ -147,19 +141,26 @@ func (c *Client) readPump() {
 			continue
 		}
 
-		finalMessage, err = json.Marshal(objmap)
-		if err != nil {
-			log.Printf("error: %v", err)
+		messageBytes, ok := objmap["message"]
+		var messageString string
+		if ok {
+			messageString = string(messageBytes)[1 : len(string(messageBytes))-1]
+		} else {
+			continue
 		}
 
 		// Message from User A -> server -> B.
 		message1 := Message{
 			To:              toString,
 			From:            fromString,
-			Message:         string(finalMessage),
+			Message:         messageString,
 			ClientMessageId: mIdString,
-			MessageType:     "message"}
-		c.hub.unicast <- &message1
+			MessageType:     "message",
+			ActiveUsers:     activeUsers}
+
+		if toString != fromString {
+			c.hub.unicast <- &message1
+		}
 
 		// "Sent" notification message to the client.
 		// Message from A -> server -> A
@@ -168,18 +169,13 @@ func (c *Client) readPump() {
 		objmap["statusType"] = json.RawMessage("\"sent\"")
 		delete(objmap, "message")
 
-		finalMessage, err = json.Marshal(objmap)
-		if err != nil {
-			log.Printf("error: %v", err)
-		}
-
 		messageSent := &Message{
 			To:              fromString,
 			From:            fromString,
 			MessageType:     "status",
 			StatusType:      "sent",
-			Message:         string(finalMessage),
 			ClientMessageId: mIdString,
+			ActiveUsers:     activeUsers,
 		}
 		c.send <- messageSent
 	}
@@ -204,31 +200,25 @@ func (c *Client) writePump() {
 			if err != nil {
 				return
 			}
-			message := messageWithMetadata.Message
-			w.Write([]byte(message))
+			messageString, err := json.Marshal(messageWithMetadata)
+			if err != nil {
+				log.Printf("error: %v", err)
+				return
+			}
+			w.Write([]byte(messageString))
 			if err := w.Close(); err != nil {
 				return
 			}
 
 			// Send a "delivered" notification back the client via the hub.
-			fmt.Println(messageWithMetadata)
 			if messageWithMetadata.MessageType == "message" {
 				message1 := &Message{
 					To:              messageWithMetadata.From,
 					From:            messageWithMetadata.From,
 					ClientMessageId: messageWithMetadata.ClientMessageId,
 					MessageType:     "status",
-					StatusType:      "delivered"}
-
-				messageString, err := json.Marshal(message1)
-				fmt.Println("message1: ", message1)
-				if err != nil {
-					log.Printf("error: %v", err)
-					return
-				}
-				fmt.Println("messageString: ", string(messageString))
-				message1.Message = string(messageString)
-				fmt.Println("apple: ", message1)
+					StatusType:      "delivered",
+					ActiveUsers:     messageWithMetadata.ActiveUsers}
 
 				c.hub.unicast <- message1
 			}

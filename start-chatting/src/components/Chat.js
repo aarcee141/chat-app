@@ -117,7 +117,6 @@ function Chat() {
   }, [messageRequest]);
 
   useEffect(() => {
-    console.log(lastMessage)
     if (lastMessage != null && lastMessage.data.length > 0) {
       var data = JSON.parse(lastMessage.data)
       if (data.messageType == "message") {
@@ -126,11 +125,15 @@ function Chat() {
           sender: data.from,
           text: data.message,
         });
-        setActiveUsers(data.activeUsers);
+        if (data.activeUsers.length > 0) {  
+          setActiveUsers(data.activeUsers);
+        }
         setMessages(newMessages);
         setMessageHistory((prev) => prev.concat(lastMessage));
       } else if (data.messageType == "subscribe") {
-        setActiveUsers(data.activeUsers);
+        if (data.activeUsers.length > 0) {  
+          setActiveUsers(data.activeUsers);
+        }
       } else if (data.messageType == "status") {
         // Do something useful with the status being pushed.
         // The status for a message could be "sent" or "delivered".

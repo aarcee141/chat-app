@@ -1,12 +1,11 @@
 import React from "react";
 
 function UserList({ users, activeUsers, selectedUser, handleUserClick, handleSignOut }) {
-    // console.log(users, activeUsers)
     return (
         <div style={{ flex: "0 0 250px", backgroundColor: "#f5f5f5" }}>
             <h2 style={{ padding: "20px" }}>Users</h2>
             <ul style={{ listStyleType: "none", margin: 0, padding: 0 }}>
-                {users.map((u) => (
+                {users && users.map((u) => (
                     <UserListItem
                         key={u.email}
                         user={u}
