@@ -61,8 +61,8 @@ type Message struct {
 
 	// MessageType
 	// 1. subscribe
-	// 2. message
-	// 3. presence
+	// 2. message (Payload contains a normal message.)
+	// 3. status (Payload contains status of the message (sent, delivered).)
 	MessageType string `json:"messageType"`
 
 	// Sent, delivered, read.
