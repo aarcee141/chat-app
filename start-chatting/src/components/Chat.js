@@ -3,6 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import firebase from "firebase/compat/app";
 import axios from "axios";
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import UserList from "./UserList";
+import MessageSection from "./MessageSection";
+// import ChatInputForm from "./ChatInputForm";
 
 
 function Chat() {
@@ -146,75 +149,21 @@ function Chat() {
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
-      <div style={{ flex: "0 0 250px", backgroundColor: "#f5f5f5" }}>
-        <h2 style={{ padding: "20px" }}>Users</h2>
-        <ul style={{ listStyleType: "none", margin: 0, padding: 0 }}>
-          {users.map((u) => (
-            <li
-              key={u.email}
-              style={{
-                cursor: "pointer",
-                padding: "10px",
-                backgroundColor:
-                  selectedUser && u.email === selectedUser.email ? "#e0e0e0" : "inherit",
-                borderRight: activeUsers.includes(u.email) ? "5px solid green" : "none",
-              }}
-              onClick={() => handleUserClick(u)}
-            >
-              {u.email}
-            </li>
-          ))}
-        </ul>
-        <button
-          onClick={() => handleSignOut()}
-          style={{
-            backgroundColor: "#f44336",
-            color: "white",
-            padding: "10px",
-            border: "none",
-            borderRadius: "5px",
-            margin: "20px",
-            cursor: "pointer",
-          }}
-        >
-          Sign Out
-        </button>
-      </div>
+      <UserList
+        users={users}
+        selectedUser={selectedUser}
+        activeUsers={activeUsers}
+        handleUserClick={handleUserClick}
+        handleSignOut={handleSignOut}
+      />
       {selectedUser && (
+        <>
         <div style={{ flex: "1", padding: "20px" }}>
-          <h2 style={{ marginBottom: "20px" }}>{selectedUser.email}</h2>
-          <div
-            style={{
-              border: "1px solid #ddd",
-              padding: "10px",
-              height: "400px",
-              overflowY: "scroll",
-              marginBottom: "10px",
-            }}
-          >
-            {messages[selectedUser.email] &&
-              messages[selectedUser.email].map((m, index) => (
-                <div
-                  key={index}
-                  style={{
-                    textAlign: m.sender === user.email ? "right" : "left",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "inline-block",
-                      backgroundColor:
-                        m.sender === user.email ? "#eee" : "#e0e0e0",
-                      padding: "10px",
-                      borderRadius: "10px",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    {m.text}
-                  </div>
-                </div>
-              ))}
-          </div>
+        <MessageSection
+          selectedUser={selectedUser}
+          messages={messages}
+          user={user} 
+          />
           <form onSubmit={handleSendMessage}>
             <input
               type="text"
@@ -228,8 +177,7 @@ function Chat() {
                 borderRadius: "5px",
                 marginRight: "10px",
                 marginBottom: "10px",
-              }}
-            />
+              }} />
             <button
               type="submit"
               style={{
@@ -242,8 +190,7 @@ function Chat() {
             >
               Send
             </button>
-          </form>
-          <form onSubmit={handleDeleteMessages}>
+          </form><form onSubmit={handleDeleteMessages}>
             <button
               type="submit"
               style={{
@@ -257,11 +204,12 @@ function Chat() {
               Delete chat
             </button>
           </form>
-        </div>
+        </div></>
       )}
       <span>The Chat server is currently {connectionStatus}</span>
     </div>
   );
+
 }
 
 export default Chat;
