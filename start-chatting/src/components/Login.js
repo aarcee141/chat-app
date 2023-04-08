@@ -7,17 +7,6 @@ import axios from "axios";
 import Chat from "./Chat";
 
 function Login() {
-  const firebaseConfig = {
-    apiKey: "AIzaSyCID011nJBjLjhwyjh3bvF-FjnFkK59pQw",
-    authDomain: "start-chatting-fd745.firebaseapp.com",
-    projectId: "start-chatting-fd745",
-    storageBucket: "start-chatting-fd745.appspot.com",
-    messagingSenderId: "855278592853",
-    appId: "1:855278592853:web:42cdb87e8d58b95bce05dc",
-    measurementId: "G-13JE6CXLQH",
-  };
-
-  firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const [user, setUser] = useState(null);
 

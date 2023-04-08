@@ -23,15 +23,17 @@ function Chat() {
   const [clientMessageId, setClientMessageId] = useState("");
   const [activeUsers, setActiveUsers] = useState([]);
 
-  const subscribeRequest = {
-    from: user.email,
-    messageType: 'subscribe',
-  };
-
   const [messageRequest, setMessageRequest] = useState({});
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socket, {
-    onOpen: () => sendMessage(JSON.stringify(subscribeRequest))
+    onOpen: () => {
+      const subscribeRequest = {
+        from: user.email,
+        messageType: 'subscribe',
+      }
+      sendMessage(JSON.stringify(subscribeRequest))
+    },
+    shouldReconnect: (closeEvent) => true,
   });
 
   // console.log(auth);
