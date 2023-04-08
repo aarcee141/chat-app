@@ -25,7 +25,7 @@ function MessageSection({ selectedUser, messages, user }) {
 function Message({ message, user }) {
     const isUserMessage = message.sender === user.email;
     const textAlign = isUserMessage ? "right" : "left";
-    const backgroundColor = isUserMessage ? "#eee" : "#e0e0e0";
+    const backgroundColor = isUserMessage ? "#25D366" : "#e0e0e0";
 
     return (
         <div style={{ textAlign }}>
@@ -36,9 +36,61 @@ function Message({ message, user }) {
                     padding: "10px",
                     borderRadius: "10px",
                     marginBottom: "5px",
+                    position: "relative"
                 }}
             >
                 {message.text}
+                {message.state === "sent" && (
+                    <div
+                        style={{
+                            position: "absolute",
+                            bottom: "0",
+                            right: "0",
+                            display: "flex",
+                            alignItems: "center"
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: "10px",
+                                height: "10px",
+                                backgroundColor: "#D32592",
+                                borderRadius: "50%",
+                                marginRight: "5px"
+                            }}
+                        />
+                    </div>
+                )}
+                {message.state === "delivered" && (
+                    <div
+                        style={{
+                            position: "absolute",
+                            bottom: "0",
+                            right: "0",
+                            display: "flex",
+                            alignItems: "center"
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: "10px",
+                                height: "10px",
+                                backgroundColor: "#D32592",
+                                borderRadius: "50%",
+                                marginRight: "5px"
+                            }}
+                        />
+                        <div
+                            style={{
+                                width: "10px",
+                                height: "10px",
+                                backgroundColor: "#D32592",
+                                borderRadius: "50%",
+                                marginRight: "5px"
+                            }}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );
