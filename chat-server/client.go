@@ -61,8 +61,8 @@ type Message struct {
 
 	// MessageType
 	// 1. subscribe
-	// 2. message (Payload contains a normal message.)
-	// 3. status (Payload contains status of the message (sent, delivered).)
+	// 2. message
+	// 3. presence
 	MessageType string `json:"messageType"`
 
 	// Sent, delivered, read.
@@ -125,18 +125,18 @@ func (c *Client) readPump() {
 			continue
 		}
 
-		to, ok := objmap["to"]
-		var toString string
-		if ok {
-			toString = string(to)[1 : len(string(to))-1]
-		} else {
-			continue
-		}
-
 		messageId, ok := objmap["clientMessageId"]
 		var mIdString string
 		if ok {
 			mIdString = string(messageId)[1 : len(string(messageId))-1]
+		} else {
+			continue
+		}
+
+		to, ok := objmap["to"]
+		var toString string
+		if ok {
+			toString = string(to)[1 : len(string(to))-1]
 		} else {
 			continue
 		}

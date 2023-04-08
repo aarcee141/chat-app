@@ -25,18 +25,15 @@ function Chat() {
 
   const [messageRequest, setMessageRequest] = useState({});
 
+  const subscribeRequest = {
+    from: user.email,
+    messageType: 'subscribe',
+  }
+
   const { sendMessage, lastMessage, readyState } = useWebSocket(socket, {
-    onOpen: () => {
-      const subscribeRequest = {
-        from: user.email,
-        messageType: 'subscribe',
-      }
-      sendMessage(JSON.stringify(subscribeRequest))
-    },
+    onOpen: () => sendMessage(JSON.stringify(subscribeRequest)),
     shouldReconnect: (closeEvent) => true,
   });
-
-  // console.log(auth);
 
   useEffect(() => {
     async function getUsers() {
@@ -99,6 +96,7 @@ function Chat() {
   useEffect(() => {
     if (selectedUser && newMessage) {
       const newMessages = { ...messages };
+      console.log(selectedUser)
       if (!newMessages[selectedUser.email]) {
         newMessages[selectedUser.email] = [];
       }
@@ -134,6 +132,7 @@ function Chat() {
 
   useEffect(() => {
     if (messageRequest != {}) {
+      console.log(messageRequest)
       sendMessage(JSON.stringify(messageRequest));
     }
   }, [messageRequest]);
