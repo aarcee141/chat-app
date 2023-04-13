@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import firebase from "firebase/compat/app";
 import axios from "axios";
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import useWebSocket, { ReadyState } from "react-use-websocket";
 import UserList from "./UserList";
 import MessageSection from "./MessageSection";
-
 
 function Chat() {
   const [users, setUsers] = useState([]);
@@ -18,7 +17,7 @@ function Chat() {
   const navigate = useNavigate();
   const auth = firebase.auth();
   const user = auth.currentUser;
-  const [socket, setSocket] = useState('ws://localhost:8080/echo');
+  const [socket, setSocket] = useState("ws://localhost:8080/echo");
   const [messageId, setMessageId] = useState(0);
   const [clientMessageId, setClientMessageId] = useState("");
   const [activeUsers, setActiveUsers] = useState([]);
@@ -27,8 +26,8 @@ function Chat() {
 
   const subscribeRequest = {
     from: user.email,
-    messageType: 'subscribe',
-  }
+    messageType: "subscribe",
+  };
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socket, {
     onOpen: () => sendMessage(JSON.stringify(subscribeRequest)),
@@ -73,7 +72,6 @@ function Chat() {
     setNewMessage(event.target.value);
   }
 
-
   async function handleSendMessage(event) {
     event.preventDefault();
     if (selectedUser && newMessage) {
@@ -83,20 +81,20 @@ function Chat() {
       }
 
       // Increment the message Id counter.
-      setMessageId(messageId + 1)
+      setMessageId(messageId + 1);
     }
   }
 
   // ClientMessageId is updated when messageId changes.
   useEffect(() => {
-    setClientMessageId(String(Date.now() + "$" + messageId))
+    setClientMessageId(String(Date.now() + "$" + messageId));
   }, [messageId]);
 
   // message is sent to server when clientMessageId is updated and user has been selected.
   useEffect(() => {
     if (selectedUser && newMessage) {
       const newMessages = { ...messages };
-      console.log(selectedUser)
+      console.log(selectedUser);
       if (!newMessages[selectedUser.email]) {
         newMessages[selectedUser.email] = [];
       }
@@ -104,14 +102,14 @@ function Chat() {
         sender: user.email,
         text: newMessage,
         clientMessageId: clientMessageId,
-        state: "not_sent"
+        state: "not_sent",
       });
       setMessageRequest({
         from: user.email,
         to: selectedUser.email,
         message: newMessage,
         messageType: "message",
-        clientMessageId: clientMessageId
+        clientMessageId: clientMessageId,
       });
       setMessages(newMessages);
       setNewMessage("");
@@ -125,21 +123,21 @@ function Chat() {
       if (!newMessages[selectedUser.email]) {
         newMessages[selectedUser.email] = [];
       }
-      newMessages[selectedUser.email] = []
+      newMessages[selectedUser.email] = [];
       setMessages(newMessages);
     }
   }
 
   useEffect(() => {
     if (messageRequest != {}) {
-      console.log(messageRequest)
+      console.log(messageRequest);
       sendMessage(JSON.stringify(messageRequest));
     }
   }, [messageRequest]);
 
   useEffect(() => {
     if (lastMessage != null && lastMessage.data.length > 0) {
-      var data = JSON.parse(lastMessage.data)
+      var data = JSON.parse(lastMessage.data);
 
       if (data.activeUsers.length > 0) {
         setActiveUsers(data.activeUsers);
@@ -149,29 +147,31 @@ function Chat() {
         newMessages[data.from].push({
           sender: data.from,
           text: data.message,
-          state: "received"
+          state: "received",
         });
         setMessages(newMessages);
         setMessageHistory((prev) => prev.concat(lastMessage));
       } else if (data.messageType == "status") {
-        console.log(data)
+        console.log(data);
         const newMessages = { ...messages };
-        newMessages[selectedUser.email].filter(state => state.clientMessageId == data.clientMessageId).map((m) => {
-          if (m.state == "not_sent" || m.state == "sent") {
-            m.state = data.statusType;
-          }
-        });
+        newMessages[selectedUser.email]
+          .filter((state) => state.clientMessageId == data.clientMessageId)
+          .map((m) => {
+            if (m.state == "not_sent" || m.state == "sent") {
+              m.state = data.statusType;
+            }
+          });
         setMessages(newMessages);
       }
     }
   }, [lastMessage, setMessageHistory]);
 
   const connectionStatus = {
-    [ReadyState.CONNECTING]: 'Connecting',
-    [ReadyState.OPEN]: 'Connected',
-    [ReadyState.CLOSING]: 'Closing',
-    [ReadyState.CLOSED]: 'Closed',
-    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    [ReadyState.CONNECTING]: "Connecting",
+    [ReadyState.OPEN]: "Connected",
+    [ReadyState.CLOSING]: "Closing",
+    [ReadyState.CLOSED]: "Closed",
+    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
 
   return (
@@ -204,7 +204,8 @@ function Chat() {
                   borderRadius: "5px",
                   marginRight: "10px",
                   marginBottom: "10px",
-                }} />
+                }}
+              />
               <button
                 type="submit"
                 style={{
@@ -217,7 +218,8 @@ function Chat() {
               >
                 Send
               </button>
-            </form><form onSubmit={handleDeleteMessages}>
+            </form>
+            <form onSubmit={handleDeleteMessages}>
               <button
                 type="submit"
                 style={{
@@ -231,12 +233,12 @@ function Chat() {
                 Delete chat
               </button>
             </form>
-          </div></>
+          </div>
+        </>
       )}
       <span>The Chat server is currently {connectionStatus}</span>
     </div>
   );
-
 }
 
 export default Chat;
