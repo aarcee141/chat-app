@@ -1,14 +1,10 @@
-import { userData } from "../config/constants";
-import fs from "fs";
+import { UserModel } from "../database/schemas/user_schema";
+import { Constants } from "../config/constants";
 
-class GetUsersService {
-  async getUsers(req: any): Promise<any> {
-    // Read data from local JSON storage.
-    const filePath = "./data/users.json";
-    const jsonData = fs.readFileSync(filePath, { encoding: "utf-8" });
-    const parsedData = JSON.parse(jsonData) as userData[];
-
-    return parsedData;
+export class GetUsersService {
+  public async getUsers(req: any): Promise<any> {
+    const users = await UserModel.find().lean(); // get all users from the Users collection and convert to plain JS object
+    return users;
   }
 }
 

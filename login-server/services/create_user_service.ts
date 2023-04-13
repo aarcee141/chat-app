@@ -1,34 +1,32 @@
-import { userData } from "../config/constants";
-import fs from "fs";
+import { UserModel } from "../database/schemas/user_schema";
+export class CreateUserService {
+  public async createUser(req: any): Promise<any> {
+    // Check if the user already exists in the database
+    const user = req.body;
+    const existingUser = await UserModel.findOne({ emailId: user.email });
 
-class CreateUserService {
-  async createUser(req: any): Promise<any> {
-    const { email, name } = req.body;
+    if (existingUser) {
+      return {
+        status: "success",
+        message: "User already exists",
+        emailId: user.email,
+      };
+    }
 
-    // Store data in local JSON storage.
-    const filePath = "./data/users.json";
-    const jsonData = fs.readFileSync(filePath, { encoding: "utf-8" });
-    const parsedData = JSON.parse(jsonData) as userData[];
+    // Create a new user object
+    const newUser = new UserModel({
+      emailId: user.email,
+      displayName: user.name,
+    });
 
-    const newData: userData = {
-      name: name,
-      email: email,
+    // Save the user object to the database
+    await newUser.save();
+
+    return {
+      status: "success",
+      message: "User created successfully",
+      emailId: user.email,
     };
-
-    let isNewData = true;
-    for (let i = 0; i < parsedData.length; i++) {
-      if (parsedData[i].email === newData.email) {
-        isNewData = false;
-      }
-    }
-    if (isNewData) {
-      parsedData.push(newData);
-      fs.writeFileSync(filePath, JSON.stringify(parsedData));
-    }
-
-    // Log and return data for debugging.
-    console.log(JSON.stringify(parsedData));
-    return JSON.stringify(JSON.stringify(parsedData));
   }
 }
 

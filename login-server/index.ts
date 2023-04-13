@@ -1,9 +1,11 @@
 import { createUserRoute, getUsersRoute } from "./routes";
+import MongoDbClient from "./database/mongo_connection";
+import { ENV } from "./config/constants";
 
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+require("dotenv").config({ path: ENV.FILE });
 
 const app = express();
 
@@ -11,28 +13,24 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Routes
-app.use("/api", createUserRoute);
-app.use("/api", getUsersRoute);
+const dbUri = process.env.DB;
+console.log("dbUri" + dbUri);
+/**
+ * Connect to mongodb and if successful then start application
+ */
+MongoDbClient.connect(dbUri)
+  .then(() => {
+    // Routes
+    app.use("/api", createUserRoute);
+    app.use("/api", getUsersRoute);
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  //   useCreateIndex: true,i
-});
+    // Start server
+    const PORT = process.env.PORT || 5000;
 
-mongoose.connection.on("connected", () => {
-  console.log("Connected to MongoDB!");
-});
-
-mongoose.connection.on("error", (err: any) => {
-  console.error(`Failed to connect to MongoDB: ${err}`);
-});
-
-// Start server
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
-});
+    app.listen(PORT, () => {
+      console.log(`Server started on port ${PORT}`);
+    });
+  })
+  .catch((error: any) => {
+    console.error(`Failed to connect to MongoDB: ${error}`);
+  });
