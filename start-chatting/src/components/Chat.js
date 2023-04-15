@@ -75,11 +75,10 @@ function Chat() {
     event.preventDefault();
     if (selectedUser && newMessage) {
       const newMessages = { ...messages };
-      if (!newMessages[selectedUser.email]) {
-        newMessages[selectedUser.email] = [];
-      }
+      if (!newMessages[selectedUser.emailId]) {
+        newMessages[selectedUser.emailId] = [];
+      } // Increment the message Id counter.
 
-      // Increment the message Id counter.
       setMessageId(messageId + 1);
     }
   }
@@ -93,11 +92,11 @@ function Chat() {
   useEffect(() => {
     if (selectedUser && newMessage) {
       const newMessages = { ...messages };
-      console.log(selectedUser);
-      if (!newMessages[selectedUser.email]) {
-        newMessages[selectedUser.email] = [];
+      console.log("Client Message Id changed", newMessage);
+      if (!newMessages[selectedUser.emailId]) {
+        newMessages[selectedUser.emailId] = [];
       }
-      newMessages[selectedUser.email].push({
+      newMessages[selectedUser.emailId].push({
         sender: user.email,
         text: newMessage,
         clientMessageId: clientMessageId,
@@ -105,7 +104,7 @@ function Chat() {
       });
       setMessageRequest({
         from: user.email,
-        to: selectedUser.email,
+        to: selectedUser.emailId,
         message: newMessage,
         messageType: "message",
         clientMessageId: clientMessageId,
@@ -119,10 +118,10 @@ function Chat() {
     event.preventDefault();
     if (selectedUser) {
       const newMessages = { ...messages };
-      if (!newMessages[selectedUser.email]) {
-        newMessages[selectedUser.email] = [];
+      if (!newMessages[selectedUser.emailId]) {
+        newMessages[selectedUser.emailId] = [];
       }
-      newMessages[selectedUser.email] = [];
+      newMessages[selectedUser.emailId] = [];
       setMessages(newMessages);
     }
   }
@@ -153,7 +152,7 @@ function Chat() {
       } else if (data.messageType == "status") {
         console.log(data);
         const newMessages = { ...messages };
-        newMessages[selectedUser.email]
+        newMessages[selectedUser.emailId]
           .filter((state) => state.clientMessageId == data.clientMessageId)
           .map((m) => {
             if (m.state == "not_sent" || m.state == "sent") {
