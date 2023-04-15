@@ -38,7 +38,6 @@ function Chat() {
     async function getUsers() {
       try {
         const response = await axios.get("http://localhost:5000/api/getUsers");
-        console.log(response);
         setUsers(response.data);
       } catch (error) {
         console.error(error);
