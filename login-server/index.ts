@@ -13,7 +13,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const dbUri = process.env.DB;
+// const dbUri = process.env.DB;
+const dbUri = ("mongodb://ec2-54-185-192-156.us-west-2.compute.amazonaws.com:27017")
 console.log("dbUri" + dbUri);
 /**
  * Connect to mongodb and if successful then start application

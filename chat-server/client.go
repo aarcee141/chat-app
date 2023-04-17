@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var (
@@ -47,6 +48,10 @@ type Client struct {
 
 	// Buffered channel of outbound messages.
 	send chan *Message
+
+	// Store the messages already received by ensuring that the messageId is unique.
+	// KV(ClientMessageId -> true)
+	sentMessages map[string]bool
 }
 
 type Message struct {
@@ -62,7 +67,8 @@ type Message struct {
 	// MessageType
 	// 1. subscribe
 	// 2. message
-	// 3. presence
+	// 3. status
+	// 4. load previous messages (previousMessage)
 	MessageType string `json:"messageType"`
 
 	// Sent, delivered, read.
@@ -72,9 +78,59 @@ type Message struct {
 	ClientMessageId string `json:"clientMessageId"`
 
 	ActiveUsers []string `json:"activeUsers"`
+
+	// Array of previous messages.
+	PreviousMessages []Message `json:"previousMessages"`
 }
 
-func (c *Client) readPump() {
+func (c *Client) ConvertMessageSchemaDBsToMessage(dbMessages []MessageSchemaDB) *Message {
+	// Create an array of active users.
+	activeUsers := make([]string, 0, len(c.hub.clients))
+	for key := range c.hub.clients {
+		activeUsers = append(activeUsers, key)
+	}
+
+	previousMessages := make([]Message, len(dbMessages))
+	for i, msg := range dbMessages {
+		previousMessages[i] = Message{
+			To:               msg.Receiver,
+			From:             msg.Sender,
+			Message:          msg.Content,
+			MessageType:      "message",
+			ClientMessageId:  msg.ClientMessageId,
+			ActiveUsers:      nil,
+			PreviousMessages: nil,
+		}
+	}
+	loadMessage := &Message{
+		To:               c.email,
+		From:             c.email,
+		MessageType:      "previousMessage",
+		ActiveUsers:      activeUsers,
+		PreviousMessages: previousMessages,
+	}
+	return loadMessage
+}
+
+// Function to load user messages from db for the current user from the previous 24 hours.
+func (c *Client) loadUserMessages(db *Database) {
+	user := c.email
+	userIsSender := &MessageReadSchemaDB{
+		StartTime: primitive.NewDateTimeFromTime(time.Now().Add(time.Hour * -24)),
+		Sender:    user,
+		Receiver:  "",
+	}
+	userIsReceiver := &MessageReadSchemaDB{
+		StartTime: primitive.NewDateTimeFromTime(time.Now().Add(time.Hour * -24)),
+		Sender:    "",
+		Receiver:  user,
+	}
+	db.ReadFromDb <- &ReadMessageAndSendToClient{Client: c, MessageReadSchemaDb: userIsSender}
+	db.ReadFromDb <- &ReadMessageAndSendToClient{Client: c, MessageReadSchemaDb: userIsReceiver}
+}
+
+// Function to constantly read & process messages from the client.
+func (c *Client) readPump(db *Database) {
 	defer func() {
 		c.hub.unregister <- c
 		c.conn.Close()
@@ -122,6 +178,9 @@ func (c *Client) readPump() {
 				From:        fromString,
 				MessageType: "subscribe",
 				ActiveUsers: activeUsers}
+
+			// Load user messages from db.
+			c.loadUserMessages(db)
 			continue
 		}
 
@@ -131,6 +190,13 @@ func (c *Client) readPump() {
 			mIdString = string(messageId)[1 : len(string(messageId))-1]
 		} else {
 			continue
+		}
+
+		// Check if the same message has already been received by the server.
+		if _, ok := c.sentMessages[mIdString]; ok {
+			continue
+		} else {
+			c.sentMessages[mIdString] = true
 		}
 
 		to, ok := objmap["to"]
@@ -162,6 +228,16 @@ func (c *Client) readPump() {
 			c.hub.unicast <- &message1
 		}
 
+		// Add messages to db asynchronously.
+		messageToDb := &MessageSchemaDB{
+			Sender:          fromString,
+			Receiver:        toString,
+			Content:         messageString,
+			Time:            primitive.NewDateTimeFromTime(time.Now()),
+			ClientMessageId: mIdString,
+		}
+		db.WriteToDb <- messageToDb
+
 		// "Sent" notification message to the client.
 		// Message from A -> server -> A
 		objmap["to"] = objmap["from"]
@@ -181,6 +257,7 @@ func (c *Client) readPump() {
 	}
 }
 
+// Function to send a message to the client post processing.
 func (c *Client) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
@@ -232,16 +309,17 @@ func (c *Client) writePump() {
 }
 
 // serveWs handles websocket requests from the peer.
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request, db *Database) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan *Message)}
+
+	client := &Client{hub: hub, conn: conn, send: make(chan *Message), sentMessages: make(map[string]bool)}
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.writePump()
-	go client.readPump()
+	go client.readPump(db)
 }

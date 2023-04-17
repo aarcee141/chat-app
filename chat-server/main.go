@@ -8,8 +8,12 @@ import (
 func main() {
 	hub := newHub()
 	go hub.run()
+
+	db := NewDatabase()
+	go db.run()
+
 	http.HandleFunc("/echo", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(hub, w, r)
+		serveWs(hub, w, r, db)
 	})
 
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

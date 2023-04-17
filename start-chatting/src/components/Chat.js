@@ -160,6 +160,9 @@ function Chat() {
             }
           });
         setMessages(newMessages);
+      } else if (data.messageType == "previousMessage") {
+        // TODO(sheldont): Process previous day's messages that are loaded from the database.
+        console.log(data.previousMessages)
       }
     }
   }, [lastMessage, setMessageHistory]);

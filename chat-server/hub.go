@@ -2,7 +2,7 @@ package main
 
 type Hub struct {
 
-	// Registered clients KV(name -> client).
+	// Active clients KV(email -> client).
 	clients map[string]*Client
 
 	// Register requests from clients.
