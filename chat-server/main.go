@@ -1,8 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"net/http"
+
+	firebase "firebase.google.com/go"
+	"google.golang.org/api/option"
 )
 
 func main() {
@@ -12,8 +17,17 @@ func main() {
 	db := NewDatabase()
 	go db.run()
 
+	// Initialize the Firebase Admin SDK.
+	ctx := context.Background()
+	opt := option.WithCredentialsFile("firebase/serviceAccount.json")
+	app, err := firebase.NewApp(ctx, nil, opt)
+	if err != nil {
+		log.Fatalf("error initializing app: %v\n", err)
+	}
+	auth := NewAuth(app)
+
 	http.HandleFunc("/echo", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(hub, w, r, db)
+		serveWs(hub, w, r, db, auth)
 	})
 
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

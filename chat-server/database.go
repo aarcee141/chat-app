@@ -92,7 +92,7 @@ func (db *Database) run() {
 		case qc := <-db.ReadFromDb:
 			messages := db.ReadMessages(qc.MessageReadSchemaDb)
 			if len(messages) > 0 {
-				qc.Client.send <- qc.Client.ConvertMessageSchemaDBsToMessage(messages)
+				qc.Client.hub.unicast <- qc.Client.ConvertMessageSchemaDBsToMessage(messages)
 			}
 		}
 	}

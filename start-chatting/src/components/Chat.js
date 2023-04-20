@@ -5,6 +5,7 @@ import axios from "axios";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import UserList from "./UserList";
 import MessageSection from "./MessageSection";
+import { getAuth } from "firebase/auth";
 
 function Chat() {
   const [users, setUsers] = useState([]);
@@ -21,6 +22,7 @@ function Chat() {
   const [messageId, setMessageId] = useState(0);
   const [clientMessageId, setClientMessageId] = useState("");
   const [activeUsers, setActiveUsers] = useState([]);
+  const [token, setToken] = useState([]);
 
   const [messageRequest, setMessageRequest] = useState({});
 
@@ -79,6 +81,8 @@ function Chat() {
         newMessages[selectedUser.emailId] = [];
       } // Increment the message Id counter.
 
+      setToken(await getAuth().currentUser.getIdToken())
+
       setMessageId(messageId + 1);
     }
   }
@@ -107,6 +111,7 @@ function Chat() {
         to: selectedUser.emailId,
         message: newMessage,
         messageType: "message",
+        authToken: token,
         clientMessageId: clientMessageId,
       });
       setMessages(newMessages);

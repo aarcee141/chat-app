@@ -39,3 +39,7 @@ ehthumbs.db
 Icon?
 ehthumbs_vista.db
 
+# Service account files
+chat-server/firebase/serviceAccount.json
+
+

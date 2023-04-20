@@ -26,12 +26,12 @@ const (
 	pingPeriod = (pongWait * 9) / 10
 
 	// Maximum message size allowed from peer.
-	maxMessageSize = 512
+	maxMessageSize = 1024 * 32 // 32KB
 )
 
 var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+	ReadBufferSize:  2 * 1024,
+	WriteBufferSize: 32 * 1024,
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
@@ -78,6 +78,9 @@ type Message struct {
 	ClientMessageId string `json:"clientMessageId"`
 
 	ActiveUsers []string `json:"activeUsers"`
+
+	// Token used to verify the user identity.
+	AuthToken string `json:"authToken"`
 
 	// Array of previous messages.
 	PreviousMessages []Message `json:"previousMessages"`
@@ -130,7 +133,7 @@ func (c *Client) loadUserMessages(db *Database) {
 }
 
 // Function to constantly read & process messages from the client.
-func (c *Client) readPump(db *Database) {
+func (c *Client) readPump(db *Database, auth *Auth) {
 	defer func() {
 		c.hub.unregister <- c
 		c.conn.Close()
@@ -168,10 +171,11 @@ func (c *Client) readPump(db *Database) {
 			activeUsers = append(activeUsers, key)
 		}
 
+		c.email = fromString
+		c.hub.register <- c
+
 		// For messageType == Subscribe, we send a self notification message with the list of active users.
 		if string(objmap["messageType"]) == "\"subscribe\"" {
-			c.email = fromString
-			c.hub.register <- c
 			// Message from User A -> server -> A.
 			c.send <- &Message{
 				To:          fromString,
@@ -181,6 +185,22 @@ func (c *Client) readPump(db *Database) {
 
 			// Load user messages from db.
 			c.loadUserMessages(db)
+			continue
+		}
+
+		// VerifyIdToken
+		token, ok := objmap["authToken"]
+		var tokenString string
+		if ok {
+			tokenString = string(token)[1 : len(string(token))-1]
+		} else {
+			continue
+		}
+		authEmail := auth.VerifyIdToken(tokenString)
+
+		// If email from firebase authentication response doens't match client email address,
+		// the user is trying some mischief and the message won't be sent.
+		if c.email != authEmail {
 			continue
 		}
 
@@ -297,12 +317,13 @@ func (c *Client) writePump() {
 					MessageType:     "status",
 					StatusType:      "delivered",
 					ActiveUsers:     messageWithMetadata.ActiveUsers}
-
+				println("Sent delivered message")
 				c.hub.unicast <- message1
 			}
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				println("Error writing message")
 				return
 			}
 		}
@@ -310,7 +331,7 @@ func (c *Client) writePump() {
 }
 
 // serveWs handles websocket requests from the peer.
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request, db *Database) {
+func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request, db *Database, auth *Auth) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -322,5 +343,5 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request, db *Database) {
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.writePump()
-	go client.readPump(db)
+	go client.readPump(db, auth)
 }
