@@ -228,11 +228,12 @@ func (c *Client) readPump(db *Database) {
 			c.hub.unicast <- &message1
 		}
 
-		// Add messages to db asynchronously.
+		// Add messages to database asynchronously.
 		messageToDb := &MessageSchemaDB{
 			Sender:          fromString,
 			Receiver:        toString,
 			Content:         messageString,
+			MessageStatus:   "sent",
 			Time:            primitive.NewDateTimeFromTime(time.Now()),
 			ClientMessageId: mIdString,
 		}

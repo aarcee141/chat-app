@@ -28,6 +28,7 @@ type MessageSchemaDB struct {
 	Sender          string             `bson:"sender,omitempty"`
 	Receiver        string             `bson:"receiver,omitempty"`
 	Content         string             `bson:"content,omitempty"`
+	MessageStatus   string             `bson:"message_status,omitempty"` // Sent, Delivered.
 	Time            primitive.DateTime `bson:"time,omitempty"`
 	ClientMessageId string             `bson:"clientMessageId,omitempty"`
 }
