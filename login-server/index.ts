@@ -1,4 +1,4 @@
-import { createUserRoute, getUsersRoute } from "./routes";
+import { createUserRoute, getUserMessagesRoute, getUsersRoute } from "./routes";
 import MongoDbClient from "./database/mongo_connection";
 import { ENV } from "./config/constants";
 
@@ -24,6 +24,7 @@ MongoDbClient.connect(dbUri)
     // Routes
     app.use("/api", createUserRoute);
     app.use("/api", getUsersRoute);
+    app.use("/api", getUserMessagesRoute);
 
     // Start server
     const PORT = process.env.PORT || 5000;
