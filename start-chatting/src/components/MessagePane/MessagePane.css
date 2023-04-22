@@ -1,0 +1,15 @@
+.message-pane {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 80%;
+  background-color: #f2f2f2;
+  padding: 10px;
+  overflow-y: scroll;
+}
+
+.message-pane h2 {
+  margin-top: 20px;
+  text-align: center;
+}

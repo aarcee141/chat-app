@@ -1,12 +1,14 @@
 .user-list-container {
-  width: 300px;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  background-color: #f0f0f0;
-  overflow-y: scroll;
+  width: 20%;
+  border-right: 1px solid #ccc;
+  padding: 20px;
 }
 
 .user-list {
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
