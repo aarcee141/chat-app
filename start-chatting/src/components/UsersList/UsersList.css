@@ -1,0 +1,12 @@
+.user-list-container {
+  width: 300px;
+  height: 100%;
+  background-color: #f0f0f0;
+  overflow-y: scroll;
+}
+
+.user-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}

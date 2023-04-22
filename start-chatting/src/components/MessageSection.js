@@ -3,7 +3,17 @@ import React from "react";
 function MessageSection({ selectedUser, messages, user }) {
   return (
     <div>
-      <h2 style={{ marginBottom: "20px" }}>{selectedUser.emailId}</h2>
+      <h2
+        style={{
+          marginBottom: "20px",
+          fontSize: "32px",
+          fontWeight: "bold",
+          color: "#333",
+          textAlign: "center",
+        }}
+      >
+        {selectedUser.emailId}
+      </h2>
       <div
         style={{
           border: "1px solid #ddd",
@@ -11,6 +21,7 @@ function MessageSection({ selectedUser, messages, user }) {
           height: "400px",
           overflowY: "scroll",
           marginBottom: "10px",
+          borderRadius: "10px",
         }}
       >
         {messages[selectedUser.emailId] &&
@@ -39,7 +50,16 @@ function Message({ message, user }) {
           position: "relative",
         }}
       >
-        {message.text}
+        <div
+          style={{
+            color: isUserMessage ? "#fff" : "#333",
+            fontSize: "20px",
+            fontWeight: "bold",
+            marginBottom: "10px",
+          }}
+        >
+          {message.text}
+        </div>
         {message.state === "sent" && (
           <div
             style={{
