@@ -4,6 +4,16 @@ import GetUsersService from "../services/get_users_service";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/getUsers:
+ *   get:
+ *     summary: Returns a list of all the users.
+ *     description: Retrieve a list of all the users from the database.
+ *     responses:
+ *       200:
+ *         description: A list of users
+ */
 router.get(
   "/getUsers",
   async (

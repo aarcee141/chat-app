@@ -41,5 +41,6 @@ ehthumbs_vista.db
 
 # Service account files
 chat-server/firebase/serviceAccount.json
+login-server/config/firebase/serviceAccount.json
 
 

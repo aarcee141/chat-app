@@ -5,6 +5,7 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Chat from "./Chat";
+import { getAuth } from "firebase/auth";
 
 function Login() {
   const auth = firebase.auth();
@@ -14,16 +15,23 @@ function Login() {
 
   useEffect(() => {
     // Set up a listener to watch for changes in the user's authentication state
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setUser(user);
         console.log(user.email);
         axios
-          .post("http://localhost:5000/api/createUser", {
+          .post("http://localhost:5000/api/createUser", 
+          {
             email: user.email,
             name: user.displayName,
             // Add any other user data you want to store in your database
-          })
+          },
+          {
+            headers: {
+              Authorization: 'Bearer ' + await getAuth().currentUser.getIdToken()
+            }
+          }
+          )
           .then((response) => {
             // console.log("Print Auth: " + JSON.stringify(auth.currentUser));
             // localStorage.setItem("auth", JSON.stringify(auth));

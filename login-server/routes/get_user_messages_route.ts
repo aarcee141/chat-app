@@ -4,18 +4,29 @@ import GetUserMessagesService from "../services/get_user_messages_service";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/getUserMessages:
+ *   get:
+ *     summary: Fetches current user's previous messages [Needs Auth token in header].
+ *     description: Fetches current user's previous to/from messages from the database.
+ *     responses:
+ *       200:
+ *         description: User created successfully
+ */
 router.get(
-  "/getUserMessages/:userEmail",
+  "/",
   async (
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
   ) => {
     try {
-      console.log(req.params)
-      const resp = await GetUserMessagesService.getMessages(req.params.userEmail);
-      res.status(200).send(resp);
-      return next();
+      if (req.body.user) {
+        const resp = await GetUserMessagesService.getMessages(req.body.user.email);
+        res.status(200).send(resp);
+        return next();
+      }
     } catch (error) {
       res.status(500).send({
         status: Constants.FAILED.toString(),

@@ -4,8 +4,18 @@ import CreateUserService from "../services/create_user_service";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/createUser:
+ *   get:
+ *     summary: Create a user [Needs Auth token in header].
+ *     description: Creates a new user and adds them to the database if the user doesn't already exist.
+ *     responses:
+ *       200:
+ *         description: User created successfully
+ */
 router.post(
-  "/createUser",
+  "/",
   async (
     req: express.Request,
     res: express.Response,
