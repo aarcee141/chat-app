@@ -13,3 +13,34 @@
   margin-top: 20px;
   text-align: center;
 }
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px;
+  height: 80%;
+  overflow-y: scroll;
+}
+
+.message-input-container {
+  display: flex;
+}
+.message-input {
+  font-family: "Google Sans", sans-serif;
+  font-size: medium;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 80%;
+  box-sizing: border-box;
+}
+
+.send-button {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 1.5rem;
+  color: #3b82f6;
+  cursor: pointer;
+}

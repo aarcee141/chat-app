@@ -2,14 +2,26 @@ import React, { useState, useEffect } from "react";
 import UsersList from "../UsersList/UsersList";
 import MessagePane from "../MessagePane/MessagePane";
 import getMessages from "../../services/GetMessages";
+import firebase from "firebase/compat/app";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 
 function ChatHome() {
-  // Inputs:
-  // Userlist
-  // MessageSection
   //   const [messages, setMessages] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedUserMessages, setSelectedUserMessages] = useState(null);
+
+  const auth = firebase.auth();
+  const subscribeRequest = {
+    from: auth.currentUser,
+    messageType: "subscribe",
+  };
+  const { sendMessage, lastMessage, readyState } = useWebSocket(
+    "ws://localhost:8080/echo",
+    {
+      onOpen: () => sendMessage(JSON.stringify(subscribeRequest)),
+      shouldReconnect: (closeEvent) => true,
+    }
+  );
 
   //   getMessages().then((value) => setMessages(value));
 
@@ -32,6 +44,7 @@ function ChatHome() {
       <MessagePane
         user={selectedUser}
         messages={selectedUserMessages}
+        sendMessage={sendMessage}
       ></MessagePane>
     </>
   );

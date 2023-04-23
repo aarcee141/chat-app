@@ -71,11 +71,11 @@ function Login() {
         {user ? `You are logged in as ${user.email}` : "You are not logged in"}
       </p>
       {user ? (
-        <Chat/>
+        <Chat />
+      ) : (
         // <button onClick={handleLogout} className="btn-primary">
         //   Log out
         // </button>
-      ) : (
         <button onClick={handleLogin} className="btn-primary">
           Log in with Google
         </button>
