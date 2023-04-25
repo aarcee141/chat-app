@@ -89,11 +89,12 @@ func (db *Database) run() {
 		select {
 		case m := <-db.WriteToDb:
 			db.AddMessage(m)
-		case qc := <-db.ReadFromDb:
-			messages := db.ReadMessages(qc.MessageReadSchemaDb)
-			if len(messages) > 0 {
-				qc.Client.hub.unicast <- qc.Client.ConvertMessageSchemaDBsToMessage(messages)
-			}
+		case qc := <-db.ReadFromDb: // This is disabled for now and shouldn't trigger.
+			log.Println("Read Messages from DB: ", qc.Client)
+			// messages := db.ReadMessages(qc.MessageReadSchemaDb)
+			// if len(messages) > 0 {
+			// 	// qc.Client.hub.unicast <- qc.Client.ConvertMessageSchemaDBsToMessage(messages)
+			// }
 		}
 	}
 }

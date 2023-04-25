@@ -34,8 +34,8 @@ function ChatHome() {
       setSelectedUserMessages(
         messages.filter((message) => {
           return (
-            message.receiver === selectedUser.email ||
-            message.sender === selectedUser.email
+            (message.receiver === selectedUser.email && message.sender === auth.currentUser.email) ||
+            (message.sender === selectedUser.email && message.receiver === auth.currentUser.email)
           );
         })
       );
@@ -53,8 +53,8 @@ function ChatHome() {
             data.message,
             data.from,
             data.to,
-            new Date().toISOString,
-            null
+            data.serverTime,
+            null,
           ),
         ]);
         console.log(

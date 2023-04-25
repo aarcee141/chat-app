@@ -82,6 +82,9 @@ type Message struct {
 	// Token used to verify the user identity.
 	AuthToken string `json:"authToken"`
 
+	// Time at which the message reaches the server.
+	ServerTime string `json:"serverTime"`
+
 	// Array of previous messages.
 	PreviousMessages []Message `json:"previousMessages"`
 }
@@ -163,6 +166,7 @@ func (c *Client) readPump(db *Database, auth *Auth) {
 		if ok {
 			fromString = string(from)[1 : len(string(from))-1]
 		} else {
+			log.Println("Error: \"from\" not found in input JSON")
 			continue
 		}
 
@@ -183,8 +187,8 @@ func (c *Client) readPump(db *Database, auth *Auth) {
 				MessageType: "subscribe",
 				ActiveUsers: activeUsers}
 
-			// Load user messages from db.
-			c.loadUserMessages(db)
+			// [Disabled] Load user messages from db.
+			// c.loadUserMessages(db)
 			continue
 		}
 
@@ -194,6 +198,7 @@ func (c *Client) readPump(db *Database, auth *Auth) {
 		if ok {
 			tokenString = string(token)[1 : len(string(token))-1]
 		} else {
+			log.Println("Error: \"authToken\" not found in input JSON")
 			continue
 		}
 		authEmail := auth.VerifyIdToken(tokenString)
@@ -209,6 +214,7 @@ func (c *Client) readPump(db *Database, auth *Auth) {
 		if ok {
 			mIdString = string(messageId)[1 : len(string(messageId))-1]
 		} else {
+			log.Println("Error: \"clientMessageId\" not found in input JSON")
 			continue
 		}
 
@@ -224,6 +230,7 @@ func (c *Client) readPump(db *Database, auth *Auth) {
 		if ok {
 			toString = string(to)[1 : len(string(to))-1]
 		} else {
+			log.Println("Error: \"to\" not found in input JSON")
 			continue
 		}
 
@@ -232,6 +239,7 @@ func (c *Client) readPump(db *Database, auth *Auth) {
 		if ok {
 			messageString = string(messageBytes)[1 : len(string(messageBytes))-1]
 		} else {
+			log.Println("Error: \"message\" not found in input JSON")
 			continue
 		}
 
@@ -242,6 +250,7 @@ func (c *Client) readPump(db *Database, auth *Auth) {
 			Message:         messageString,
 			ClientMessageId: mIdString,
 			MessageType:     "message",
+			ServerTime:      time.Now().Format(time.RFC3339),
 			ActiveUsers:     activeUsers}
 
 		if toString != fromString {
@@ -292,10 +301,12 @@ func (c *Client) writePump() {
 			if !ok {
 				// The hub closed the channel.
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				log.Println("Hub closed the channel. Closing the websocket connection.")
 				return
 			}
 			w, err := c.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
+				log.Println("Error: ", err)
 				return
 			}
 			messageString, err := json.Marshal(messageWithMetadata)
@@ -305,6 +316,7 @@ func (c *Client) writePump() {
 			}
 			w.Write([]byte(messageString))
 			if err := w.Close(); err != nil {
+				log.Println("Websocket closed error: ", err)
 				return
 			}
 
@@ -317,13 +329,13 @@ func (c *Client) writePump() {
 					MessageType:     "status",
 					StatusType:      "delivered",
 					ActiveUsers:     messageWithMetadata.ActiveUsers}
-				println("Sent delivered message")
+				log.Println("Sent delivered message")
 				c.hub.unicast <- message1
 			}
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				println("Error writing message")
+				log.Println("Error writing message: ", err)
 				return
 			}
 		}

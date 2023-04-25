@@ -1,4 +1,5 @@
 import React from "react";
+import firebase from "firebase/compat/app";
 import "./Message.css";
 
 function Message({ message }) {
@@ -6,6 +7,7 @@ function Message({ message }) {
   const month = date.toLocaleString("default", { month: "long" });
   const day = date.getDate();
   const time = date.toLocaleTimeString("en-US", { timeStyle: "short" });
+  const auth = firebase.auth();
 
   return (
     <>
@@ -14,6 +16,9 @@ function Message({ message }) {
         <div>{`${month} ${day}, ${time}`}</div>
       </div>
       <div className="message-container">{message.content}</div>
+      {/* <div className="photo-container">
+        <img src={auth.currentUser.photoURL}></img>
+        </div> */}
     </>
   );
 }
