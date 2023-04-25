@@ -69,6 +69,7 @@ function ChatHome() {
       <UsersList setSelectedUser={setSelectedUser}></UsersList>
       <MessagePane
         user={selectedUser}
+        setMessages={setMessages}
         messages={selectedUserMessages}
         sendMessage={sendMessage}
       ></MessagePane>

@@ -6,7 +6,7 @@ import firebase from "firebase/compat/app";
 import "./MessagePane.css";
 import MessageModel from "../../models/MessageModel";
 
-function MessagePane({ user, messages, sendMessage }) {
+function MessagePane({ user, messages, setMessages, sendMessage }) {
   const [messageInput, setMessageInput] = useState("");
 
   const handleInputChange = (event) => {
@@ -26,15 +26,16 @@ function MessagePane({ user, messages, sendMessage }) {
         clientMessageId: String(Date.now()),
       };
       sendMessage(JSON.stringify(messageRequest));
-      messages.push(
+      setMessages([
+        ...messages,
         new MessageModel(
           messageRequest.message,
           messageRequest.from,
           messageRequest.to,
           new Date().toISOString(),
-          null
-        )
-      );
+          null,
+        ),
+      ]);
       setMessageInput("");
     }
   };
