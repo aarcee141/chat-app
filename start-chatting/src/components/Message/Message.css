@@ -1,0 +1,24 @@
+.message-header {
+  display: flex;
+  align-items: center;
+  /* font-weight: bold; */
+  margin-bottom: 4px;
+  color: rgb(95, 96, 95);
+}
+
+.message-header > div:first-child {
+  flex: 1;
+}
+
+.message-header > div:last-child {
+  margin-left: 8px;
+}
+
+.message-container {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 8px;
+  max-width: 400px;
+  word-wrap: break-word;
+}

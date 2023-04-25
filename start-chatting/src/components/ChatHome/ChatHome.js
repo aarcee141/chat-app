@@ -4,15 +4,16 @@ import MessagePane from "../MessagePane/MessagePane";
 import getMessages from "../../services/GetMessages";
 import firebase from "firebase/compat/app";
 import useWebSocket, { ReadyState } from "react-use-websocket";
+import MessageModel from "../../models/MessageModel";
 
 function ChatHome() {
-  //   const [messages, setMessages] = useState(null);
+  const [messages, setMessages] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedUserMessages, setSelectedUserMessages] = useState(null);
 
   const auth = firebase.auth();
   const subscribeRequest = {
-    from: auth.currentUser,
+    from: auth.currentUser.email,
     messageType: "subscribe",
   };
   const { sendMessage, lastMessage, readyState } = useWebSocket(
@@ -23,20 +24,45 @@ function ChatHome() {
     }
   );
 
-  //   getMessages().then((value) => setMessages(value));
-
-  //   useEffect(() => {
-  //     if (messages != null) {
-  //       setSelectedUserMessages(
-  //         messages.filter((message) => {
-  //           return message.receiver === selectedUser;
-  //         })
-  //       );
-  //     }
-  //   }, [selectedUser, messages]);
   useEffect(() => {
-    console.log("SelectedUser: " + selectedUser);
-  }, [selectedUser]);
+    getMessages().then((messages) => setMessages(messages));
+  }, []);
+
+  useEffect(() => {
+    console.log("Triggered: " + JSON.stringify(messages));
+    if (selectedUser != null && messages != null) {
+      setSelectedUserMessages(
+        messages.filter((message) => {
+          return (
+            message.receiver === selectedUser.email ||
+            message.sender === selectedUser.email
+          );
+        })
+      );
+    }
+  }, [selectedUser, messages]);
+
+  useEffect(() => {
+    if (lastMessage != null && lastMessage.data.length > 0) {
+      var data = JSON.parse(lastMessage.data);
+
+      if (data.messageType === "message") {
+        setMessages([
+          ...messages,
+          new MessageModel(
+            data.message,
+            data.from,
+            data.to,
+            new Date().toISOString,
+            null
+          ),
+        ]);
+        console.log(
+          "Last element: " + JSON.stringify(messages[messages.length - 1])
+        );
+      }
+    }
+  }, [lastMessage]);
 
   return (
     <>

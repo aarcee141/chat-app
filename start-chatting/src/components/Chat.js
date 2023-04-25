@@ -81,7 +81,7 @@ function Chat() {
         newMessages[selectedUser.emailId] = [];
       } // Increment the message Id counter.
 
-      setToken(await getAuth().currentUser.getIdToken())
+      setToken(await getAuth().currentUser.getIdToken());
 
       setMessageId(messageId + 1);
     }
@@ -167,7 +167,7 @@ function Chat() {
         setMessages(newMessages);
       } else if (data.messageType == "previousMessage") {
         // TODO(sheldont): Process previous day's messages that are loaded from the database.
-        console.log(data.previousMessages)
+        console.log(data.previousMessages);
       }
     }
   }, [lastMessage, setMessageHistory]);

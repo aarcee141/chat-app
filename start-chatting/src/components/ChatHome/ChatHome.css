@@ -1,0 +1,5 @@
+.chat-container {
+  display: flex;
+  background-image: url("/WhatsAppBackGround.jpeg");
+  background-size: cover;
+}

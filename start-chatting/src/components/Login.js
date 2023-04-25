@@ -5,6 +5,7 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Chat from "./Chat";
+import ChatHome from "./ChatHome/ChatHome";
 import { getAuth } from "firebase/auth";
 
 function Login() {
@@ -20,17 +21,19 @@ function Login() {
         setUser(user);
         console.log(user.email);
         axios
-          .post("http://localhost:5000/api/createUser", 
-          {
-            email: user.email,
-            name: user.displayName,
-            // Add any other user data you want to store in your database
-          },
-          {
-            headers: {
-              Authorization: 'Bearer ' + await getAuth().currentUser.getIdToken()
+          .post(
+            "http://localhost:5000/api/createUser",
+            {
+              email: user.email,
+              name: user.displayName,
+              // Add any other user data you want to store in your database
+            },
+            {
+              headers: {
+                Authorization:
+                  "Bearer " + (await getAuth().currentUser.getIdToken()),
+              },
             }
-          }
           )
           .then((response) => {
             // console.log("Print Auth: " + JSON.stringify(auth.currentUser));
@@ -38,7 +41,7 @@ function Login() {
             // console.log(
             //   "Current User: " + JSON.parse(localStorage.getItem("auth"))
             // );
-            navigate("/chat");
+            navigate("/test");
             console.log(response.data);
           })
           .catch((error) => {
@@ -71,7 +74,7 @@ function Login() {
         {user ? `You are logged in as ${user.email}` : "You are not logged in"}
       </p>
       {user ? (
-        <Chat />
+        <ChatHome />
       ) : (
         // <button onClick={handleLogout} className="btn-primary">
         //   Log out

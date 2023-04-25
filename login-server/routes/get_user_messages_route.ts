@@ -23,7 +23,9 @@ router.get(
   ) => {
     try {
       if (req.body.user) {
-        const resp = await GetUserMessagesService.getMessages(req.body.user.email);
+        const resp = await GetUserMessagesService.getMessages(
+          req.body.user.email
+        );
         res.status(200).send(resp);
         return next();
       }

@@ -15,7 +15,7 @@ const router = express.Router();
  *         description: A list of users
  */
 router.get(
-  "/getUsers",
+  "/",
   async (
     req: express.Request,
     res: express.Response,

@@ -1,35 +1,32 @@
 import axios from "axios";
 import MessageModel from "../models/MessageModel";
+import firebase from "firebase/compat/app";
 
-function getMessages() {
+async function getMessages() {
   try {
-    return [
-      new MessageModel(
-        "Hello",
-        "ravi4594@gmail.com",
-        "sheltauro@gmail.com",
-        null,
-        null
-      ),
-    ];
-    // const response = await axios.get("http://localhost:5000/api/getMessages");
-    // const messages = response.data;
-    // console.log(
-    //   "Message: ",
-    //   response,
-    //   typeof messages,
-    //   Array.isArray(messages)
-    // );
-    // return messages.map(
-    //   (message) =>
-    //     new MessageModel(
-    //       message.content,
-    //       message.sender,
-    //       message.receiver,
-    //       message.sentTime,
-    //       message.receivedTime
-    //     )
-    // );
+    const response = await axios.get(
+      "http://localhost:5000/api/getUserMessages",
+      {
+        headers: {
+          Authorization:
+            "Bearer " + (await firebase.auth().currentUser.getIdToken()),
+        },
+      }
+    );
+    console.log("GetUserMessages: " + JSON.stringify(response));
+    const messages = response.data;
+    return [...messages.messagesFromUser, ...messages.messagesToUser]
+      .map(
+        (message) =>
+          new MessageModel(
+            message.content,
+            message.sender,
+            message.receiver,
+            message.time,
+            null
+          )
+      )
+      .sort((a, b) => (a.sentTime > b.sentTime ? 1 : -1));
   } catch (error) {
     console.error(error);
   }

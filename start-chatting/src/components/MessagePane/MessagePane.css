@@ -7,6 +7,8 @@
   background-color: #f2f2f2;
   padding: 10px;
   overflow-y: scroll;
+  background-image: url("../../../public/WhatsAppBackGround.png");
+  background-size: cover;
 }
 
 .message-pane h2 {
