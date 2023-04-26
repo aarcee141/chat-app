@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faSmile } from "@fortawesome/free-solid-svg-icons";
 import Message from "../Message/Message";
 import firebase from "firebase/compat/app";
 import "./MessagePane.css";
 import MessageModel from "../../models/MessageModel";
+import EmojiPicker from 'emoji-picker-react';
 
 function MessagePane({ user, messages, setMessages, sendMessage }) {
   const [messageInput, setMessageInput] = useState("");
+  const [chosenEmoji, setChosenEmoji] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const handleInputChange = (event) => {
     setMessageInput(event.target.value);
@@ -40,6 +43,15 @@ function MessagePane({ user, messages, setMessages, sendMessage }) {
     }
   };
 
+  const onEmojiClick = (emojiData, event) => {
+    setChosenEmoji(emojiData);
+    setMessageInput(messageInput + emojiData.emoji);
+  };
+
+  const toggleEmojiPicker = () => {
+    setShowEmojiPicker(!showEmojiPicker);
+  }
+
   return (
     <>
       {user && (
@@ -62,8 +74,14 @@ function MessagePane({ user, messages, setMessages, sendMessage }) {
               value={messageInput}
               onChange={handleInputChange}
             />
+            <div className="emoji-picker" style={{ display: showEmojiPicker ? 'block' : 'none' }}>
+              <EmojiPicker onEmojiClick={onEmojiClick} />
+            </div>
             <button className="send-button" onClick={handleSendClick}>
               <FontAwesomeIcon icon={faPaperPlane} />
+            </button>
+            <button className="emoji-button" onClick={toggleEmojiPicker}>
+              <FontAwesomeIcon icon={faSmile} />
             </button>
           </div>
         </div>

@@ -27,7 +27,9 @@
 
 .message-input-container {
   display: flex;
+  position: relative;
 }
+
 .message-input {
   font-family: "Google Sans", sans-serif;
   font-size: medium;
@@ -45,4 +47,21 @@
   font-size: 1.5rem;
   color: #3b82f6;
   cursor: pointer;
+}
+
+.emoji-button {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 1.5rem;
+  color: #3b82f6;
+  cursor: pointer;
+
+}
+
+.emoji-picker {
+  position: absolute;
+  bottom: 60px;
+  right: 20px;
+  z-index: 100;
 }
