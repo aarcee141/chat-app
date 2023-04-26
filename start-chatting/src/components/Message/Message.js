@@ -3,11 +3,24 @@ import firebase from "firebase/compat/app";
 import "./Message.css";
 
 function Message({ message }) {
-  const date = new Date(message.sentTime);
-  const month = date.toLocaleString("default", { month: "long" });
-  const day = date.getDate();
-  const time = date.toLocaleTimeString("en-US", { timeStyle: "short" });
   const auth = firebase.auth();
+
+  function getMessageTime(message) {
+    const date = new Date(message.sentTime);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else {
+      return date.toLocaleDateString([], { month: 'short', day: 'numeric' }) +
+        ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+  }
+
 
   return (
     <>
@@ -16,8 +29,8 @@ function Message({ message }) {
           <div className="photo-container">
             <img src={auth.currentUser.photoURL}></img>
           </div>}
-        <div>{message.sender}</div>
-        <div>{`${month} ${day}, ${time}`}</div>
+        <div class="message-sender">{message.sender}</div>
+        <div class="message-time"> {getMessageTime(message)} </div>
       </div>
       <div className="message-container"> {message.content}</div>
     </>

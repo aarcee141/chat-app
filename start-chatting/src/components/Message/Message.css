@@ -3,7 +3,6 @@
   align-items: center;
   /* font-weight: bold; */
   margin-bottom: 4px;
-  color: rgb(95, 96, 95);
 }
 
 .message-header > div:first-child {
@@ -12,6 +11,15 @@
 
 .message-header > div:last-child {
   margin-left: 8px;
+}
+
+.message-sender {
+  font-weight: 500;
+}
+
+.message-time {
+  font-size: 12px;
+  font-weight: 200;
 }
 
 .message-container {
