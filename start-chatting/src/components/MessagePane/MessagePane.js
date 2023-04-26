@@ -52,6 +52,13 @@ function MessagePane({ user, messages, setMessages, sendMessage }) {
     setShowEmojiPicker(!showEmojiPicker);
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSendClick();
+    }
+  };
+
   return (
     <>
       {user && (
@@ -73,6 +80,7 @@ function MessagePane({ user, messages, setMessages, sendMessage }) {
               className="message-input"
               value={messageInput}
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
             />
             <div className="emoji-picker" style={{ display: showEmojiPicker ? 'block' : 'none' }}>
               <EmojiPicker onEmojiClick={onEmojiClick} />
