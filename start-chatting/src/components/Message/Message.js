@@ -4,6 +4,7 @@ import "./Message.css";
 
 function Message({ message }) {
   const auth = firebase.auth();
+  const isSentByCurrentUser = message.sender === auth.currentUser.email;
 
   function getMessageTime(message) {
     const date = new Date(message.sentTime);
@@ -24,17 +25,22 @@ function Message({ message }) {
 
   return (
     <>
-      <div className="message-header">
-        {auth.currentUser.photoURL &&
+      <div className={`message-header" ${isSentByCurrentUser ? 'sent-message-header' : 'received-message-header'}`}>
+        {auth.currentUser.photoURL && (
           <div className="photo-container">
             <img src={auth.currentUser.photoURL}></img>
-          </div>}
-        <div class="message-sender">{message.sender}</div>
-        <div class="message-time"> {getMessageTime(message)} </div>
+          </div>
+        )}
+        <div className="message-sender">{message.sender}</div>
+        <div className="message-time"> {getMessageTime(message)} </div>
       </div>
-      <div className="message-container"> {message.content}</div>
-    </>
-  );
+      <div
+        className={`message-container ${isSentByCurrentUser ? 'sent-message' : 'received-message'
+          }`}
+      >
+        {message.content}
+      </div>
+    </>);
 }
 
 export default Message;

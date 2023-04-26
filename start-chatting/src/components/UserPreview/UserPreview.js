@@ -10,7 +10,7 @@ function UserPreview({ user, setSelectedUser }) {
   return (
     <>
       <li className="user-preview" onClick={handleClick}>
-        {user.name}
+        {user.email}
       </li>
     </>
   );

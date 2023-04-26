@@ -1,4 +1,12 @@
-.message-header {
+.sent-message-header {
+  display: inline-flex;
+  align-items: center;
+  /* font-weight: bold; */
+  margin-bottom: 4px;
+  margin-left: 40rem;
+}
+
+.received-message-header {
   display: inline-flex;
   align-items: center;
   /* font-weight: bold; */
@@ -18,15 +26,31 @@
 }
 
 .message-time {
+  margin-left: 0.5rem;
   font-size: 12px;
   font-weight: 200;
 }
 
-.message-container {
-  background-color: #f2f2f2;
+.sent-message {
+  background-color: #007AFF;
+  color: #ffffff;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Google Sans', sans-serif;
+  font-size: 20px;
+  line-height: 1.4;
+  padding: 8px;
+  margin: 8px;
+  margin-left: 40rem;
+  max-width: 700px;
+  word-wrap: break-word;
+}
+
+.received-message {
+  background-color: #f2f2f2;
   color: #333333;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
   font-family: 'Google Sans', sans-serif;
   font-size: 20px;
   line-height: 1.4;
