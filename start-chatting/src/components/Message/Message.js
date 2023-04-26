@@ -12,13 +12,14 @@ function Message({ message }) {
   return (
     <>
       <div className="message-header">
+        {auth.currentUser.photoURL &&
+          <div className="photo-container">
+            <img src={auth.currentUser.photoURL}></img>
+          </div>}
         <div>{message.sender}</div>
         <div>{`${month} ${day}, ${time}`}</div>
       </div>
-      <div className="message-container">{message.content}</div>
-      {/* <div className="photo-container">
-        <img src={auth.currentUser.photoURL}></img>
-        </div> */}
+      <div className="message-container"> {message.content}</div>
     </>
   );
 }

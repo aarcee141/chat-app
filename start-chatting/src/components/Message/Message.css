@@ -22,3 +22,16 @@
   max-width: 400px;
   word-wrap: break-word;
 }
+
+.photo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-container img {
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  margin-right: 8px;
+}
