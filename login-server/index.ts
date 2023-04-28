@@ -5,16 +5,19 @@ import Middleware from "./middleware/index";
 import fs from 'fs';
 
 
+
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const fileUpload = require('express-fileupload');
 require("dotenv").config({ path: ENV.FILE });
 
 const app = express();
 
 // Middleware
+app.use(fileUpload());
 app.use(express.json());
 app.use(cors());
 
@@ -59,6 +62,8 @@ MongoDbClient.connect(dbUri)
       [Middleware.decodeToken],
       getUserMessagesRoute
     );
+
+    // Upload and update profile picture.
     app.use(
       "/api/uploadProfilePicture",
       [Middleware.decodeToken],
