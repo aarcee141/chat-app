@@ -35,6 +35,11 @@ This is to ensure that your server can send auth tokens to firebase for verifica
 - `chat-server/firebase/serviceAccount.json` for the go chat server.
 - `login-server/config/firebase/serviceAccount.json` for the login & user-management server.
 
+### 4. Add the mongodb connection config json.
+This is to ensure that your server can connect to mongodb and the app works perfectly. You need to add this file to two locations:
+- `chat-server/mongodb_config.json` for the go chat server.
+- `login-server/mongodb_config.json` for the login & user-management server.
+
 ## Running the project. 
 ### 1. You will need to run each of the sections independently. To do this create three terminals and in each of them paste the following commands:
 - `start-chatting`:
