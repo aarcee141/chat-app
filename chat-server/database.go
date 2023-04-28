@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -44,12 +46,37 @@ type MessageReadSchemaDB struct {
 	Receiver  string
 }
 
-func NewDatabase() *Database {
+type Config struct {
+	MongoUrl string `json:"url"`
+}
+
+func LoadConfig(filename string) (*Config, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	config := Config{}
+	err = decoder.Decode(&config)
+	if err != nil {
+		return nil, err
+	}
+
+	return &config, nil
+}
+
+func NewDatabase(filename string) *Database {
 	db := &Database{WriteToDb: make(chan *MessageSchemaDB), ReadFromDb: make(chan *ReadMessageAndSendToClient)}
 
+	config, err := LoadConfig(filename)
+	if err != nil {
+		log.Fatal("DB connection error: ", err)
+	}
+
 	// Set client options
-	clientOptions := options.Client().ApplyURI("mongodb://ec2-54-185-192-156.us-west-2.compute.amazonaws.com:27017")
-	// clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	clientOptions := options.Client().ApplyURI(config.MongoUrl)
 
 	// Connect to MongoDB
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

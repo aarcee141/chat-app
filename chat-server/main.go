@@ -14,7 +14,7 @@ func main() {
 	hub := newHub()
 	go hub.run()
 
-	db := NewDatabase()
+	db := NewDatabase("mongodb_config.json")
 	go db.run()
 
 	// Initialize the Firebase Admin SDK.
