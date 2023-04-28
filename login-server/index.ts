@@ -1,4 +1,4 @@
-import { createUserRoute, getUserMessagesRoute, getUsersRoute } from "./routes";
+import { createUserRoute, getUserMessagesRoute, getUsersRoute, uploadProfilePictureRoute } from "./routes";
 import MongoDbClient from "./database/mongo_connection";
 import { ENV } from "./config/constants";
 import Middleware from "./middleware/index";
@@ -58,6 +58,11 @@ MongoDbClient.connect(dbUri)
       "/api/getUserMessages",
       [Middleware.decodeToken],
       getUserMessagesRoute
+    );
+    app.use(
+      "/api/uploadProfilePicture",
+      [Middleware.decodeToken],
+      uploadProfilePictureRoute
     );
 
     // Start server.

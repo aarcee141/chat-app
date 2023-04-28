@@ -20,6 +20,9 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  profilePicture: {
+    type: String,
+  },
 });
 
 const UserModel = mongoose.model("Users", userSchema);

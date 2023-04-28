@@ -47,4 +47,7 @@ login-server/config/firebase/serviceAccount.json
 login-server/mongodb_config.json
 chat-server/mongodb_config.json
 
+# AWS S3 config.
+login-server/s3/aws_s3_config.json
+
 
