@@ -5,6 +5,7 @@ import getMessages from "../../services/GetMessages";
 import firebase from "firebase/compat/app";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import MessageModel from "../../models/MessageModel";
+import Header from "../Header/Header";
 
 function ChatHome() {
   const [messages, setMessages] = useState(null);
@@ -65,7 +66,8 @@ function ChatHome() {
   }, [lastMessage]);
 
   return (
-    <>
+    <div className="start-chatting">
+      <Header> </Header>
       <UsersList setSelectedUser={setSelectedUser}></UsersList>
       <MessagePane
         user={selectedUser}
@@ -73,7 +75,7 @@ function ChatHome() {
         messages={selectedUserMessages}
         sendMessage={sendMessage}
       ></MessagePane>
-    </>
+    </div>
   );
 }
 

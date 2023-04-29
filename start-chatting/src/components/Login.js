@@ -62,11 +62,6 @@ function Login() {
     await signInWithPopup(auth, provider);
   };
 
-  const handleLogout = async () => {
-    // Sign out the current user
-    await auth.signOut();
-  };
-
   return (
     <div style={{ textAlign: "center", marginTop: "2rem" }}>
       <h1>Start Chatting</h1>
@@ -76,9 +71,6 @@ function Login() {
       {user ? (
         <ChatHome />
       ) : (
-        // <button onClick={handleLogout} className="btn-primary">
-        //   Log out
-        // </button>
         <button onClick={handleLogin} className="btn-primary">
           Log in with Google
         </button>

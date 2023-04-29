@@ -17,6 +17,7 @@ export class CreateUserService {
     const newUser = new UserModel({
       emailId: user.email,
       displayName: user.name,
+      profilePicture: user.photoUrl,
     });
 
     // Save the user object to the database

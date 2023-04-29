@@ -12,6 +12,12 @@ function UserPreview({ user, setSelectedUser }) {
       <li className="user-preview" onClick={handleClick}>
         {user.email}
       </li>
+      {user.profilePicture && (
+        <div className="user-photo">
+          <img src={user.profilePicture}></img>
+        </div>
+      )}
+
     </>
   );
 }

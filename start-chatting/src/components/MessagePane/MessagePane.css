@@ -9,10 +9,11 @@
   overflow-y: scroll;
   background-image: url("../../../public/WhatsAppBackGround.png");
   background-size: cover;
+  z-index: 0;
 }
 
 .message-pane h2 {
-  margin-top: 20px;
+  margin-top: 2.5rem;
   text-align: center;
 }
 
