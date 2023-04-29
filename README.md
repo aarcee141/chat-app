@@ -40,6 +40,10 @@ This is to ensure that your server can connect to mongodb and the app works perf
 - `chat-server/mongodb_config.json` for the go chat server.
 - `login-server/mongodb_config.json` for the login & user-management server.
 
+### 4. Add the AWS S3 config.
+This is to ensure that we can upload images to S3. You need to add this file in one location:
+- `s3/aws_s3_config.json` for the login & user-management server.
+
 ## Running the project. 
 ### 1. You will need to run each of the sections independently. To do this create three terminals and in each of them paste the following commands:
 - `start-chatting`:
