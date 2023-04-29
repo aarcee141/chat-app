@@ -7,7 +7,6 @@ class Middleware {
     res: express.Response,
     next: express.NextFunction
   ) {
-    console.log(req.headers);
     try {
       // Token should be defined as "Bearer ${tokenData}"
       if (

@@ -1,4 +1,5 @@
-import S3 from "aws-sdk/clients/s3";
+import { Upload } from "@aws-sdk/lib-storage";
+import { S3 } from "@aws-sdk/client-s3";
 import * as aws_s3_config from "./aws_s3_config.json";
 
 const bucketName = aws_s3_config.aws_bucket_name
@@ -8,8 +9,10 @@ const secretAccessKey = aws_s3_config.aws_secret_key
 
 const s3 = new S3({
     region,
-    accessKeyId,
-    secretAccessKey
+    credentials:{
+        accessKeyId: accessKeyId,
+        secretAccessKey: secretAccessKey
+    }
 })
 
 // uploads a file to s3
@@ -24,16 +27,9 @@ export async function uploadFileToS3(file : any) {
     console.log(file)
     console.log(uploadParams)
 
-    return s3.upload(uploadParams).promise()
-}
+    return new Upload({
+        client: s3,
+        params: uploadParams,
 
-
-// downloads a file from s3
-export function getFileStream(fileKey : any) {
-    const downloadParams = {
-        Key: fileKey,
-        Bucket: bucketName
-    }
-
-    return s3.getObject(downloadParams).createReadStream()
+    }).done();
 }
