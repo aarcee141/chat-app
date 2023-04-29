@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import firebase from "firebase/compat/app";
 import axios from "axios";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import UserList from "./UserList";
-import MessageSection from "./MessageSection";
 import { getAuth } from "firebase/auth";
 
 function Chat() {
@@ -182,21 +180,9 @@ function Chat() {
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
-      <UserList
-        users={users}
-        selectedUser={selectedUser}
-        activeUsers={activeUsers}
-        handleUserClick={handleUserClick}
-        handleSignOut={handleSignOut}
-      />
       {selectedUser && (
         <>
           <div style={{ flex: "1", padding: "20px" }}>
-            <MessageSection
-              selectedUser={selectedUser}
-              messages={messages}
-              user={user}
-            />
             <form onSubmit={handleSendMessage}>
               <input
                 type="text"
