@@ -34,7 +34,7 @@ function Login() {
             }
           )
           .then((response) => {
-            navigate("/test");
+            navigate("/chat");
             console.log(response.data);
           })
           .catch((error) => {
