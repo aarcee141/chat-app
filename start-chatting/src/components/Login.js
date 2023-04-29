@@ -1,17 +1,15 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
 import React, { useState, useEffect } from "react";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Chat from "./Chat";
+import firebase from "firebase/compat/app";
 import ChatHome from "./ChatHome/ChatHome";
-import { getAuth } from "firebase/auth";
+import "firebase/compat/auth";
+import "./Login.css";
 
 function Login() {
   const auth = firebase.auth();
   const [user, setUser] = useState(null);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,16 +29,11 @@ function Login() {
             {
               headers: {
                 Authorization:
-                  "Bearer " + (await getAuth().currentUser.getIdToken()),
+                  "Bearer " + (await firebase.auth().currentUser.getIdToken()),
               },
             }
           )
           .then((response) => {
-            // console.log("Print Auth: " + JSON.stringify(auth.currentUser));
-            // localStorage.setItem("auth", JSON.stringify(auth));
-            // console.log(
-            //   "Current User: " + JSON.parse(localStorage.getItem("auth"))
-            // );
             navigate("/test");
             console.log(response.data);
           })
@@ -63,18 +56,21 @@ function Login() {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "2rem" }}>
-      <h1>Start Chatting</h1>
-      <p style={{ fontSize: "1.2rem" }}>
-        {user ? `You are logged in as ${user.email}` : "You are not logged in"}
+    <div
+      className="login-container"
+    >
+      <h1 style={{ fontSize: "4rem", margin: 0 }}>Welcome to The Future Of Chat</h1>
+      <p style={{ fontSize: "1.5rem", margin: "2rem 0" }}>
+        Chat with your friends and family anytime, anywhere.
       </p>
-      {user ? (
-        <ChatHome />
-      ) : (
-        <button onClick={handleLogin} className="btn-primary">
+      <div style={{ marginBottom: "2rem" }}>
+        <button
+          onClick={handleLogin}
+        >
           Log in with Google
         </button>
-      )}
+      </div>
+      {user && <ChatHome />}
     </div>
   );
 }

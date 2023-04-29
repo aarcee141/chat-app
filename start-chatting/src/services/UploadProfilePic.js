@@ -4,18 +4,17 @@ import firebase from "firebase/compat/app";
 
 async function uploadProfilePic(file) {
     try {
-        const response = await axios.get("http://localhost:5000/api/uploadProfilePicture", {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await axios.post("http://localhost:5000/api/uploadProfilePicture", formData, {
             headers: {
-                Authorization:
-                    "Bearer " + (await firebase.auth().currentUser.getIdToken()),
+                'Content-Type': 'multipart/form-data',
+                Authorization: "Bearer " + (await firebase.auth().currentUser.getIdToken()),
             },
-            body: {
-                file: file,
-            }
         });
-        const users = response.data;
-        // console.log("Users: ", response, typeof users, Array.isArray(users));
     } catch (error) {
+        console.log("kuch wrong hai");
         console.error(error);
     }
 }
