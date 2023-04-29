@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "emoji-mart": "^5.5.2"
+    "@restart/hooks": "^0.4.9",
+    "emoji-mart": "^5.5.2",
+    "react-autosuggest": "^10.1.0",
+    "react-bootstrap-typeahead": "^6.1.2",
+    "react-search-box": "^3.0.0"
   }
 }

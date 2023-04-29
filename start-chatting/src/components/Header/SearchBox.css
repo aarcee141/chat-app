@@ -1,0 +1,29 @@
+.search-box-container {
+    position: relative;
+  }
+  
+  .user-option {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+  }
+  
+  .user-option img {
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .user-name {
+    font-weight: bold;
+  }
+  
+  .user-email {
+    font-size: 0.8rem;
+    color: #888;
+  }
+  

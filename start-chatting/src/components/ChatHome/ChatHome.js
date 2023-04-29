@@ -67,7 +67,7 @@ function ChatHome() {
 
   return (
     <div className="start-chatting">
-      <Header> </Header>
+      <Header> setSelectedUser={setSelectedUser} </Header>
       <UsersList setSelectedUser={setSelectedUser}></UsersList>
       <MessagePane
         user={selectedUser}

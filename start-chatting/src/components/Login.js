@@ -56,19 +56,11 @@ function Login() {
   };
 
   return (
-    <div
-      className="login-container"
-    >
-      <h1 style={{ fontSize: "4rem", margin: 0 }}>Welcome to The Future Of Chat</h1>
-      <p style={{ fontSize: "1.5rem", margin: "2rem 0" }}>
-        Chat with your friends and family anytime, anywhere.
-      </p>
-      <div style={{ marginBottom: "2rem" }}>
-        <button
-          onClick={handleLogin}
-        >
-          Log in with Google
-        </button>
+    <div className="login-container">
+      <h1>Welcome to InstaChat..</h1>
+      <p>Chat with your friends and family anytime, anywhere.</p>
+      <div>
+        <button onClick={handleLogin}>Log in with Google</button>
       </div>
       {user && <ChatHome />}
     </div>
