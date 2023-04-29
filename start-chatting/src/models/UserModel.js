@@ -1,7 +1,8 @@
 class UserModel {
-  constructor(name, email) {
+  constructor(name, email, profilePicture) {
     this._name = name;
     this._email = email;
+    this._profilePicture = profilePicture;
   }
 
   get name() {
@@ -26,6 +27,14 @@ class UserModel {
 
   set status(value) {
     this._status = value;
+  }
+
+  get profilePicture() {
+    return this._profilePicture;
+  }
+
+  set profilePicture(value) {
+    this._profilePicture = value;
   }
 }
 

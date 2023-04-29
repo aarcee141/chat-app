@@ -2,8 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import firebase from "firebase/compat/app";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Header.css";
 
 function Header() {
@@ -16,6 +15,7 @@ function Header() {
     };
 
     const handleEditProfile = () => {
+        navigate("/edit-profile");
     };
 
     return (
@@ -38,7 +38,9 @@ function Header() {
                 <div className="dropdown">
                     <button className="dropbtn">Settings</button>
                     <div className="dropdown-content">
-                        <button className="dropdown-item" to="#">Edit Profile</button>
+                        <button className="dropdown-item" onClick={handleEditProfile}>
+                            Edit Profile
+                        </button>
                         <button className="dropdown-item" onClick={handleSignOut}>
                             Sign Out
                         </button>

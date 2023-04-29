@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
 import Chat from "./components/Chat";
 import ChatHome from "./components/ChatHome/ChatHome";
+import EditProfile from "./components/Settings/EditProfile";
 import "./App.css";
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/test" element={<ChatHome />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
       </Routes>
     </Router>
   );
