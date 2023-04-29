@@ -14,7 +14,6 @@ async function uploadProfilePic(file) {
             },
         });
     } catch (error) {
-        console.log("kuch wrong hai");
         console.error(error);
     }
 }
