@@ -38,7 +38,6 @@ function MessagePane({ user, usersList, messages, setMessages, sendMessage }) {
 
   const handleSendClick = async () => {
     if (messageInput.trim() !== "") {
-      console.log(`Sending message: ${messageInput}`);
 
       const messageRequest = {
         from: firebase.auth().currentUser.email,

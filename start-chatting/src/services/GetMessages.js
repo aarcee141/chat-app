@@ -13,7 +13,6 @@ async function getMessages() {
         },
       }
     );
-    console.log("GetUserMessages: " + JSON.stringify(response));
     const messages = response.data;
     return [...messages.messagesFromUser, ...messages.messagesToUser]
       .map(
