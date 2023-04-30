@@ -1,4 +1,5 @@
 {
+  "homepage": "http://aarcee141.github.io/chat-app/start-chatting",
   "name": "start-chatting",
   "version": "0.1.0",
   "private": true,
@@ -11,7 +12,7 @@
     "axios": "^1.3.4",
     "emoji-mart": "^5.5.2",
     "emoji-picker-react": "^4.4.9",
-    "firebase": "^9.19.1",
+    "firebase": "^9.21.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.10.0",
@@ -24,7 +25,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [

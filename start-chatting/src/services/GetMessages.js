@@ -5,7 +5,7 @@ import firebase from "firebase/compat/app";
 async function getMessages() {
   try {
     const response = await axios.get(
-      "http://localhost:5000/api/getUserMessages",
+      "http://ubuntu@ec2-54-212-18-31.us-west-2.compute.amazonaws.com:5000/api/getUserMessages",
       {
         headers: {
           Authorization:

@@ -23,7 +23,7 @@ function ChatHome() {
     messageType: "subscribe",
   };
   const { sendMessage, lastMessage, readyState } = useWebSocket(
-    "ws://localhost:8080/echo",
+    "ws://ubuntu@ec2-54-212-18-31.us-west-2.compute.amazonaws.com:8080/echo",
     {
       onOpen: () => sendMessage(JSON.stringify(subscribeRequest)),
       shouldReconnect: (closeEvent) => true,
