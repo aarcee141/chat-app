@@ -53,7 +53,7 @@ npm start
 ```
 - `login-server`:
 ```bash
-cd start-chatting
+cd login-server
 npm start
 ```
 - `chat-server`: 
