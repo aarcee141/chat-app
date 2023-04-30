@@ -7,17 +7,42 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import { useNavigate } from "react-router-dom";
 import MessageModel from "../../models/MessageModel";
 import Header from "../Header/Header";
+import getUsersList from "../../services/GetUserList";
 
 function ChatHome() {
+  const auth = firebase.auth();
   const [messages, setMessages] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedUserMessages, setSelectedUserMessages] = useState(null);
+  const [usersList, setUsersList] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
-  const auth = firebase.auth();
-  if (!auth.currentUser) {
-    navigate("/");
-  }
+  useEffect(() => {
+    getUsersList().then((x) => {
+      setUsersList(x);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (usersList) {
+      const currentUser = usersList.find(
+        (user) => user.email === auth.currentUser?.email
+      );
+      if (currentUser) {
+        setCurrentUser(currentUser);
+      } else {
+        // This should never happen.
+      }
+    }
+  }, [usersList, auth.currentUser]);
+
+  useEffect(() => {
+    if (!auth.currentUser) {
+      navigate("/");
+    }
+  }, [auth.currentUser, navigate]);
+
   const subscribeRequest = {
     from: auth.currentUser ? auth.currentUser.email : "example123@gmail.com",
     messageType: "subscribe",
@@ -70,10 +95,13 @@ function ChatHome() {
 
   return (
     <div className="start-chatting">
-      <Header> setSelectedUser={setSelectedUser} </Header>
+      {currentUser && usersList && (
+        <Header currentUser={currentUser} usersList={usersList} setSelectedUser={setSelectedUser} />
+      )}
       <UsersList setSelectedUser={setSelectedUser}></UsersList>
       <MessagePane
         user={selectedUser}
+        usersList={usersList}
         setMessages={setMessages}
         messages={selectedUserMessages}
         sendMessage={sendMessage}

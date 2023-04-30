@@ -7,7 +7,7 @@ import "./MessagePane.css";
 import MessageModel from "../../models/MessageModel";
 import EmojiPicker from 'emoji-picker-react';
 
-function MessagePane({ user, messages, setMessages, sendMessage }) {
+function MessagePane({ user, usersList, messages, setMessages, sendMessage }) {
   const [messageInput, setMessageInput] = useState("");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -19,18 +19,18 @@ function MessagePane({ user, messages, setMessages, sendMessage }) {
       document.removeEventListener("click", handleClickOutsideEmojiPicker);
     };
   }, []);
-  
+
   const handleClickOutsideEmojiPicker = (event) => {
     const emojiButton = document.querySelector(".emoji-button");
     const isEmojiButtonClicked = emojiButton && emojiButton.contains(event.target);
     const isEmojiPickerClicked = emojiPickerRef.current && emojiPickerRef.current.contains(event.target);
-    
+
     if (isEmojiButtonClicked || isEmojiPickerClicked) {
       return;
     }
-  
+
     setShowEmojiPicker(false);
-  };  
+  };
 
   const handleInputChange = (event) => {
     setMessageInput(event.target.value);
@@ -88,7 +88,7 @@ function MessagePane({ user, messages, setMessages, sendMessage }) {
             {messages && (
               <div>
                 {messages.map((message) => (
-                  <Message key={message.id} message={message} />
+                  <Message key={message.id} usersList={usersList} message={message} />
                 ))}
               </div>
             )}

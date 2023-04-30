@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import firebase from "firebase/compat/app";
@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Header.css";
 import SearchBox from "./SearchBox";
 
-function Header({ setSelectedUser }) {
+function Header({ currentUser, usersList, setSelectedUser }) {
   const auth = firebase.auth();
   const navigate = useNavigate();
 
@@ -26,13 +26,13 @@ function Header({ setSelectedUser }) {
         <span>InstaChat</span>
       </div>
       <div className="center-right">
-        {auth.currentUser?.photoURL && (
+        {currentUser.profilePicture && (
           <div className="logged-in-user-photo">
-            <img src={auth.currentUser.photoURL} alt="User profile" />
+            <img src={currentUser.profilePicture} alt="User profile" />
           </div>
         )}
         <span>
-          Logged in as: <div>{auth.currentUser?.displayName}</div>
+          Logged in as: <div>{currentUser.name}</div>
         </span>
       </div>
       <div className="right">
