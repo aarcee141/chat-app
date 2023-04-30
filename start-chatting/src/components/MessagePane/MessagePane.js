@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faSmile } from "@fortawesome/free-solid-svg-icons";
 import Message from "../Message/Message";
@@ -11,6 +11,24 @@ function MessagePane({ user, messages, setMessages, sendMessage }) {
   const [messageInput, setMessageInput] = useState("");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiPickerRef = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutsideEmojiPicker);
+    return () => {
+      document.removeEventListener("click", handleClickOutsideEmojiPicker);
+    };
+  }, []);
+
+  const handleClickOutsideEmojiPicker = (event) => {
+    const emojiButton = document.querySelector(".emoji-button");
+    const isEmojiButtonClicked = emojiButton.contains(event.target);
+    const isEmojiPickerClicked = emojiPickerRef.current?.contains(event.target);
+  
+    if (!isEmojiButtonClicked && !isEmojiPickerClicked) {
+      setShowEmojiPicker(false);
+    }
+  };
 
   const handleInputChange = (event) => {
     setMessageInput(event.target.value);
@@ -82,7 +100,7 @@ function MessagePane({ user, messages, setMessages, sendMessage }) {
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
             />
-            <div className="emoji-picker" style={{ display: showEmojiPicker ? 'block' : 'none' }}>
+            <div ref={emojiPickerRef} className="emoji-picker" style={{ display: showEmojiPicker ? 'block' : 'none' }}>
               <EmojiPicker onEmojiClick={onEmojiClick} />
             </div>
             <button className="send-button" onClick={handleSendClick}>
