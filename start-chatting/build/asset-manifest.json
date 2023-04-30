@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/chat-app/start-chatting/build/static/css/main.fc60870a.css",
-    "main.js": "/chat-app/start-chatting/build/static/js/main.b6f887a0.js",
-    "static/js/787.53ed1f90.chunk.js": "/chat-app/start-chatting/build/static/js/787.53ed1f90.chunk.js",
-    "static/media/abc.jpeg": "/chat-app/start-chatting/build/static/media/abc.cf6b5c122ed123261866.jpeg",
-    "static/media/WhatsAppBackGround.png": "/chat-app/start-chatting/build/static/media/WhatsAppBackGround.39f53e74f66d348d9f7c.png",
-    "index.html": "/chat-app/start-chatting/build/index.html",
-    "main.fc60870a.css.map": "/chat-app/start-chatting/build/static/css/main.fc60870a.css.map",
-    "main.b6f887a0.js.map": "/chat-app/start-chatting/build/static/js/main.b6f887a0.js.map",
-    "787.53ed1f90.chunk.js.map": "/chat-app/start-chatting/build/static/js/787.53ed1f90.chunk.js.map"
+    "main.css": "/chat-app/start-chatting/static/css/main.d8984980.css",
+    "main.js": "/chat-app/start-chatting/static/js/main.f1db217f.js",
+    "static/js/787.53ed1f90.chunk.js": "/chat-app/start-chatting/static/js/787.53ed1f90.chunk.js",
+    "static/media/abc.jpeg": "/chat-app/start-chatting/static/media/abc.cf6b5c122ed123261866.jpeg",
+    "static/media/WhatsAppBackGround.png": "/chat-app/start-chatting/static/media/WhatsAppBackGround.39f53e74f66d348d9f7c.png",
+    "index.html": "/chat-app/start-chatting/index.html",
+    "main.d8984980.css.map": "/chat-app/start-chatting/static/css/main.d8984980.css.map",
+    "main.f1db217f.js.map": "/chat-app/start-chatting/static/js/main.f1db217f.js.map",
+    "787.53ed1f90.chunk.js.map": "/chat-app/start-chatting/static/js/787.53ed1f90.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.fc60870a.css",
-    "static/js/main.b6f887a0.js"
+    "static/css/main.d8984980.css",
+    "static/js/main.f1db217f.js"
   ]
 }
