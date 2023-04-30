@@ -5,7 +5,6 @@ import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
 function UserPreview({ user, setSelectedUser }) {
   const handleClick = () => {
-    console.log(user);
     setSelectedUser(user);
   };
 

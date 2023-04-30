@@ -19,28 +19,22 @@ function ChatHome() {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    getUsersList().then((x) => {
-      setUsersList(x);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (usersList) {
-      const currentUser = usersList.find(
-        (user) => user.email === auth.currentUser?.email
-      );
-      if (currentUser) {
-        setCurrentUser(currentUser);
-      } else {
-        // This should never happen.
-      }
-    }
-  }, [usersList, auth.currentUser]);
+  function getCurrentUser(usersList) {
+    return usersList.find(
+      (user) => user.email === auth.currentUser?.email
+    );
+  }
 
   useEffect(() => {
     if (!auth.currentUser) {
       navigate("/");
+    } else {
+      getUsersList().then((users) => {
+        setCurrentUser(getCurrentUser(users));
+        const filteredUsers = users.filter((user) => user.email !== currentUser.email); // filter out the current user
+        setUsersList(filteredUsers);
+      });
+      getMessages().then((messages) => setMessages(messages));
     }
   }, [auth.currentUser, navigate]);
 
@@ -55,10 +49,6 @@ function ChatHome() {
       shouldReconnect: (closeEvent) => true,
     }
   );
-
-  useEffect(() => {
-    getMessages().then((messages) => setMessages(messages));
-  }, []);
 
   useEffect(() => {
     if (selectedUser != null && messages != null) {
@@ -102,7 +92,7 @@ function ChatHome() {
       <UsersList users={usersList} setSelectedUser={setSelectedUser}></UsersList>
       {selectedUser ? (<MessagePane
         user={selectedUser}
-        usersList={usersList}
+        currentUser={currentUser}
         setMessages={setMessages}
         messages={selectedUserMessages}
         sendMessage={sendMessage}

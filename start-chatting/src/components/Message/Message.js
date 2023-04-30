@@ -2,7 +2,7 @@ import React from "react";
 import firebase from "firebase/compat/app";
 import "./Message.css";
 
-function Message({ usersList, message }) {
+function Message({ currentUser, selectedUser, message }) {
   const auth = firebase.auth();
   const isSentByCurrentUser = message.sender === auth.currentUser.email;
 
@@ -22,19 +22,19 @@ function Message({ usersList, message }) {
     }
   }
 
-  const senderUser = usersList?.find(user => user.email === message.sender);
+  const senderUser = isSentByCurrentUser ? currentUser : selectedUser;
 
   return (
     <>
+    {senderUser && 
       <div className={`message-header" ${isSentByCurrentUser ? 'sent-message-header' : 'received-message-header'}`}>
-        {senderUser && (
           <div className="photo-container">
             <img src={senderUser.profilePicture}></img>
           </div>
-        )}
         <div className="message-sender">{senderUser.name}</div>
         <div className="message-time"> {getMessageTime(message)} </div>
       </div>
+    }
       <div
         className={`message-container ${isSentByCurrentUser ? 'sent-message' : 'received-message'
           }`}

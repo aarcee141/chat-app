@@ -94,7 +94,6 @@ function Chat() {
   useEffect(() => {
     if (selectedUser && newMessage) {
       const newMessages = { ...messages };
-      console.log("Client Message Id changed", newMessage);
       if (!newMessages[selectedUser.emailId]) {
         newMessages[selectedUser.emailId] = [];
       }
@@ -131,7 +130,6 @@ function Chat() {
 
   useEffect(() => {
     if (messageRequest != {}) {
-      console.log(messageRequest);
       sendMessage(JSON.stringify(messageRequest));
     }
   }, [messageRequest]);
@@ -153,7 +151,6 @@ function Chat() {
         setMessages(newMessages);
         setMessageHistory((prev) => prev.concat(lastMessage));
       } else if (data.messageType == "status") {
-        console.log(data);
         const newMessages = { ...messages };
         newMessages[selectedUser.emailId]
           .filter((state) => state.clientMessageId == data.clientMessageId)
@@ -165,7 +162,6 @@ function Chat() {
         setMessages(newMessages);
       } else if (data.messageType == "previousMessage") {
         // TODO(sheldont): Process previous day's messages that are loaded from the database.
-        console.log(data.previousMessages);
       }
     }
   }, [lastMessage, setMessageHistory]);

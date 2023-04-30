@@ -3,8 +3,6 @@ import { UnicastMessagesModel } from "../database/schemas/unicast_messages_schem
 export class GetUsersMessagesService {
   public async getMessages(userEmail: string): Promise<any> {
 
-    console.log(userEmail)
-
     const toUserFilter = { receiver: userEmail };
     const messagesToUser = await UnicastMessagesModel.find(toUserFilter).lean();
     const fromUserFilter = { sender: userEmail };

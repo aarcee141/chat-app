@@ -18,7 +18,6 @@ function Login() {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setUser(user);
-        // console.log(user.email);
         axios
           .post(
             "http://ubuntu@ec2-54-212-18-31.us-west-2.compute.amazonaws.com:5000/api/createUser",
@@ -36,7 +35,6 @@ function Login() {
           )
           .then((response) => {
             navigate("/chat");
-            // console.log(response.data);
           })
           .catch((error) => {
             console.error(error);

@@ -46,7 +46,6 @@ const configJson = fs.readFileSync(configPath, 'utf-8');
 const config: Config = JSON.parse(configJson);
 
 const dbUri = config.url;
-console.log("dbUri" + dbUri);
 
 
 /**

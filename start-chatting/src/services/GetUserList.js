@@ -14,7 +14,6 @@ async function getUsersList() {
       }
     );
     const users = response.data;
-    // console.log("Users: ", response, typeof users, Array.isArray(users));
     return users.map(
       (user) =>
         new UserModel(user.displayName, user.emailId, user.profilePicture)

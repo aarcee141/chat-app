@@ -24,9 +24,6 @@ export async function uploadFileToS3(file : any) {
         Key: file.filename
     }
 
-    console.log(file)
-    console.log(uploadParams)
-
     return new Upload({
         client: s3,
         params: uploadParams,
