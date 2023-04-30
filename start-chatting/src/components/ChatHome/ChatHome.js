@@ -20,9 +20,7 @@ function ChatHome() {
   const navigate = useNavigate();
 
   function getCurrentUser(usersList) {
-    return usersList.find(
-      (user) => user.email === auth.currentUser?.email
-    );
+    return usersList.find((user) => user.email === auth.currentUser?.email);
   }
 
   useEffect(() => {
@@ -31,7 +29,10 @@ function ChatHome() {
     } else {
       getUsersList().then((users) => {
         setCurrentUser(getCurrentUser(users));
-        const filteredUsers = users.filter((user) => user.email !== currentUser.email); // filter out the current user
+        // Filter out the current user.
+        const filteredUsers = users.filter(
+          (user) => user.email !== auth.currentUser.email
+        );
         setUsersList(filteredUsers);
       });
       getMessages().then((messages) => setMessages(messages));
@@ -87,16 +88,27 @@ function ChatHome() {
   return (
     <div className="start-chatting">
       {currentUser && usersList && (
-        <Header currentUser={currentUser} usersList={usersList} setSelectedUser={setSelectedUser} />
+        <Header
+          currentUser={currentUser}
+          usersList={usersList}
+          setSelectedUser={setSelectedUser}
+        />
       )}
-      <UsersList users={usersList} setSelectedUser={setSelectedUser}></UsersList>
-      {selectedUser ? (<MessagePane
-        user={selectedUser}
-        currentUser={currentUser}
-        setMessages={setMessages}
-        messages={selectedUserMessages}
-        sendMessage={sendMessage}
-      ></MessagePane>) : <Home />}
+      <UsersList
+        users={usersList}
+        setSelectedUser={setSelectedUser}
+      ></UsersList>
+      {selectedUser ? (
+        <MessagePane
+          user={selectedUser}
+          currentUser={currentUser}
+          setMessages={setMessages}
+          messages={selectedUserMessages}
+          sendMessage={sendMessage}
+        ></MessagePane>
+      ) : (
+        <Home />
+      )}
     </div>
   );
 }
