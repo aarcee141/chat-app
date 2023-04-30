@@ -69,7 +69,8 @@
 
 .photo-container img {
   border-radius: 50%;
-  height: 30px;
   width: 30px;
+  height: 30px;
   margin-right: 8px;
+  object-fit: cover;
 }
