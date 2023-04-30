@@ -1,59 +1,64 @@
-import { useState, useEffect } from "react";
-import ReactSearchBox from "react-search-box";
-import getUsersList from "../../services/GetUserList";
-import "./SearchBox.css";
+import React, { useState } from 'react';
+import Autosuggest from 'react-autosuggest';
+import './SearchBox.css';
 
-function SearchBox({ setSelectedUser }) {
-    const [usersList, setUsersList] = useState(null);
-    const [searchTerm, setSearchTerm] = useState("");
+function SearchBox({ usersList, setSelectedUser }) {
+    const [value, setValue] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
 
-    useEffect(() => {
-        getUsersList().then((x) => setUsersList(x));
-    }, []);
+    const getSuggestions = (inputValue) => {
+        const inputValueLowerCase = inputValue.trim().toLowerCase();
+        const inputLength = inputValueLowerCase.length;
 
-    const handleSelect = (user) => {
-        setSelectedUser(user);
+        return inputLength === 0
+            ? []
+            : usersList.filter(
+                (user) =>
+                    user.name.toLowerCase().slice(0, inputLength) === inputValueLowerCase
+            );
     };
 
-    const handleSearch = (value) => {
-        setSearchTerm(value);
-    };
+    const getSuggestionValue = (suggestion) => suggestion.name;
 
-    let filteredUsers = [];
-    if (usersList) {
-        const filteredUsers = usersList && usersList.filter((user) =>
-            user.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }
-
-    const renderOption = (user) => {
-        return (
-            <div key={user.email} className="user-option">
-                <img src={user.photoURL} alt={user.name} />
-                <div className="user-info">
-                    <div className="user-name">{user.name}</div>
-                    <div className="user-email">{user.email}</div>
-                </div>
+    const renderSuggestion = (suggestion) => (
+        <div className="suggestion">
+            <div className="user-option">
+                <img src={suggestion.profilePicture} alt={suggestion.name} className="user-image" />
+                <div className="user-name">{suggestion.name}</div>
             </div>
-        );
+        </div>
+    );
+
+    const onSuggestionsFetchRequested = ({ value }) => {
+        setSuggestions(getSuggestions(value));
+    };
+
+    const onSuggestionsClearRequested = () => {
+        setSuggestions([]);
+    };
+
+    const onSuggestionSelected = (event, { suggestion }) => {
+        setSelectedUser(suggestion);
+        setValue('');
+    };
+
+    const inputProps = {
+        placeholder: 'Search for a user...',
+        value,
+        onChange: (_, { newValue }) => setValue(newValue),
     };
 
     return (
         <div className="search-box-container">
-            {usersList && (
-                <ReactSearchBox
-                    placeholder="Search for a user..."
-                    data={filteredUsers}
-                    onSelect={handleSelect}
-                    onChange={handleSearch}
-                    autoFocus
-                    fuseConfigs={{
-                        tokenize: true,
-                        threshold: 0.3,
-                    }}
-                    renderOption={renderOption}
-                />
-            )}
+            <Autosuggest
+                suggestions={suggestions}
+                onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                onSuggestionsClearRequested={onSuggestionsClearRequested}
+                onSuggestionSelected={onSuggestionSelected}
+                getSuggestionValue={getSuggestionValue}
+                renderSuggestion={renderSuggestion}
+                inputProps={inputProps}
+            />
         </div>
     );
 }

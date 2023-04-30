@@ -24,6 +24,7 @@ function Header({ currentUser, usersList, setSelectedUser }) {
       <div className="left">
         <FontAwesomeIcon icon={faComments} className="app-icon" />
         <span>InstaChat</span>
+        <SearchBox usersList={usersList} setSelectedUser={setSelectedUser} />
       </div>
       <div className="center-right">
         {currentUser.profilePicture && (
