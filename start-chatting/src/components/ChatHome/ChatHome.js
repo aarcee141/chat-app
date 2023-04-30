@@ -67,6 +67,7 @@ function ChatHome() {
   }, [selectedUser, messages]);
 
   useEffect(() => {
+    const notificationSound = new Audio("Message - Notification.mp3");
     if (lastMessage != null && lastMessage.data.length > 0) {
       var data = JSON.parse(lastMessage.data);
 
@@ -82,6 +83,7 @@ function ChatHome() {
           ),
         ]);
       }
+      notificationSound.play();
     }
   }, [lastMessage]);
 
