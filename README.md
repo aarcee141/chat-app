@@ -21,7 +21,7 @@ npm install
 ```
 - `login-server`:
 ```bash
-cd start-chatting
+cd login-server
 npm install
 ```
 - `chat-server`: 
