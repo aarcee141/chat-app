@@ -98,7 +98,7 @@ function ChatHome() {
       {currentUser && usersList && (
         <Header currentUser={currentUser} usersList={usersList} setSelectedUser={setSelectedUser} />
       )}
-      <UsersList setSelectedUser={setSelectedUser}></UsersList>
+      <UsersList users={usersList} setSelectedUser={setSelectedUser}></UsersList>
       <MessagePane
         user={selectedUser}
         usersList={usersList}
