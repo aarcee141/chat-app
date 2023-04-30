@@ -18,9 +18,9 @@ type userData = {
 };
 
 enum ENV {
-  // FILE = "/home/ubuntu/server/.env",
+  FILE = "/home/ubuntu/chat-app/login-server/.env",
   // FILE = "/home/nikhil/git_nik/randup/aws/node-server/.env",
-  FILE = "/Users/aarcee/Documents/chat-app/login-server/.env",
+  // FILE = "/Users/aarcee/Documents/chat-app/login-server/.env",
 }
 
 export { Constants, userData, ENV };
