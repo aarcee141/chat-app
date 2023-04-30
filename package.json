@@ -1,5 +1,4 @@
 {
-  "homepage": "http://aarcee141.github.io/chat-app/start-chatting",
   "dependencies": {
     "@restart/hooks": "^0.4.9",
     "emoji-mart": "^5.5.2",
