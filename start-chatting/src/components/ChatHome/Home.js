@@ -7,7 +7,7 @@ function Home() {
       <div className="home-image"></div>
       <div className="home-content">
         <div>
-          <h1 className="home-heading">Welcome to Expresso Chat</h1>
+          <h1 className="home-heading">Welcome to Espresso Chat</h1>
           <p className="home-subheading">
             We're glad to have you here! Start chatting with your friends now.
           </p>

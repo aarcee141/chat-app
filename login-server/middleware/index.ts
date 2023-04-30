@@ -19,7 +19,7 @@ class Middleware {
       const decodeValue = await admin.auth().verifyIdToken(req.params.token);
       if (decodeValue) {
         req.body.user = decodeValue;
-        console.log("Auth successful");
+        // console.log("Auth successful");
         return next();
       }
       return res.status(400).json({ message: "Un authorize" });

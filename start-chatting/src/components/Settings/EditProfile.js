@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import firebase from "firebase/compat/app";
 import { useNavigate } from "react-router-dom";
 import uploadProfilePic from "../../services/UploadProfilePic";
@@ -14,6 +14,12 @@ function EditProfile() {
             setFile(e.target.files[0]);
         }
     };
+
+    useEffect(() => {
+        if (!auth.currentUser) {
+          navigate("/");
+        }
+      }, [auth.currentUser, navigate]);
 
     const handleGoBack = () => {
         navigate("/");
