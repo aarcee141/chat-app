@@ -56,14 +56,17 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <h1>Welcome to InstaChat..</h1>
-      <p>Chat with your friends and family anytime, anywhere.</p>
-      <div>
-        <button onClick={handleLogin}>Log in with Google</button>
-      </div>
-      {user && <ChatHome />}
-    </div>
+    <>
+      {user ? (<ChatHome />) : (
+        <div className="login-container">
+          <h1>Welcome to InstaChat..</h1>
+          <p>Chat with your friends and family anytime, anywhere.</p>
+          <div>
+            <button onClick={handleLogin}>Log in with Google</button>
+          </div>
+        </div>)
+      }
+    </>
   );
 }
 
