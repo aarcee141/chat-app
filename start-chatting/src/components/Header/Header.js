@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComments } from "@fortawesome/free-solid-svg-icons";
+import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import firebase from "firebase/compat/app";
 import { Link, useNavigate } from "react-router-dom";
 import "./Header.css";
@@ -22,8 +22,8 @@ function Header({ currentUser, usersList, setSelectedUser }) {
   return (
     <header>
       <div className="left">
-        <FontAwesomeIcon icon={faComments} className="app-icon" />
-        <span>InstaChat</span>
+        <FontAwesomeIcon icon={faCoffee} className="app-icon" />
+        <span>Expresso Chat</span>
         <SearchBox usersList={usersList} setSelectedUser={setSelectedUser} />
       </div>
       <div className="center-right">
