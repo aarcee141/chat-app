@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import MessageModel from "../../models/MessageModel";
 import Header from "../Header/Header";
 import getUsersList from "../../services/GetUserList";
+import Home from "./Home";
 
 function ChatHome() {
   const auth = firebase.auth();
@@ -99,13 +100,13 @@ function ChatHome() {
         <Header currentUser={currentUser} usersList={usersList} setSelectedUser={setSelectedUser} />
       )}
       <UsersList users={usersList} setSelectedUser={setSelectedUser}></UsersList>
-      <MessagePane
+      {selectedUser ? (<MessagePane
         user={selectedUser}
         usersList={usersList}
         setMessages={setMessages}
         messages={selectedUserMessages}
         sendMessage={sendMessage}
-      ></MessagePane>
+      ></MessagePane>) : <Home />}
     </div>
   );
 }

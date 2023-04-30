@@ -1,0 +1,52 @@
+.home-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: calc(100% - 20vw);
+    background-color: #f2f2f2;
+    padding: 1rem;
+    flex: 2;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: white;
+    background-image: url(../../../public/home.gif);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    font-family: "Google Sans", sans-serif;
+}
+
+.home-content {
+    width: 80%;
+    height: 70%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.home-heading {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    color: #2e2e2e;
+}
+
+.home-subheading {
+    font-size: 1.5rem;
+    margin-bottom: 4rem;
+    color: #2e2e2e;
+}
+
+.home-image {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    z-index: -1;
+}
