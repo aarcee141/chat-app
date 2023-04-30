@@ -1,45 +1,57 @@
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 40px;
-  }
-  
-  .profile-picture {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-  }
-  
-  .profile-picture label {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-  }
-  
-  .profile-picture img {
-    height: 150px;
-    border-radius: 50%;
-    margin-top: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .profile-picture input[type="file"] {
-    display: none;
-  }
-  
-  .profile-picture button {
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  
-  .profile-picture button:hover {
-    background-color: #2563eb;
-  }
-  
+.edit-profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+}
+
+.edit-profile-input-container {
+  margin-top: 30px;
+  font-size: 1.2rem;
+}
+
+.edit-profile-input-container label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 1rem;
+}
+
+.edit-profile-input-container label span {
+  margin-bottom: 10px;
+}
+
+.edit-profile-button-container {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.edit-profile-button-container button {
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.save-changes-button {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+}
+
+.save-changes-button:hover {
+  background-color: #27ae60;
+}
+
+.go-back-button {
+  background-color: white;
+  color: #2ecc71;
+  border: 2px solid #2ecc71;
+}
+
+.go-back-button:hover {
+  background-color: #2ecc71;
+  color: white;
+}
