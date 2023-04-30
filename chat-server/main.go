@@ -34,6 +34,6 @@ func main() {
 	// 	http.ServeFile(w, r, "index.html")
 	// })
 
-	http.ListenAndServe("localhost:8080", nil)
+	http.ListenAndServe(":8080", nil)
 	fmt.Print("Started server and listening at 8080")
 }
