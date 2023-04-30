@@ -19,16 +19,18 @@ function MessagePane({ user, messages, setMessages, sendMessage }) {
       document.removeEventListener("click", handleClickOutsideEmojiPicker);
     };
   }, []);
-
+  
   const handleClickOutsideEmojiPicker = (event) => {
     const emojiButton = document.querySelector(".emoji-button");
-    const isEmojiButtonClicked = emojiButton.contains(event.target);
-    const isEmojiPickerClicked = emojiPickerRef.current?.contains(event.target);
-  
-    if (!isEmojiButtonClicked && !isEmojiPickerClicked) {
-      setShowEmojiPicker(false);
+    const isEmojiButtonClicked = emojiButton && emojiButton.contains(event.target);
+    const isEmojiPickerClicked = emojiPickerRef.current && emojiPickerRef.current.contains(event.target);
+    
+    if (isEmojiButtonClicked || isEmojiPickerClicked) {
+      return;
     }
-  };
+  
+    setShowEmojiPicker(false);
+  };  
 
   const handleInputChange = (event) => {
     setMessageInput(event.target.value);
