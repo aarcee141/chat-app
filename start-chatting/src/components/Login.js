@@ -20,7 +20,7 @@ function Login() {
         console.log(user.email);
         axios
           .post(
-            "http://localhost:5000/api/createUser",
+            "http://ubuntu@ec2-54-212-18-31.us-west-2.compute.amazonaws.com:5000/api/createUser",
             {
               email: user.email,
               name: user.displayName,
@@ -57,15 +57,17 @@ function Login() {
 
   return (
     <>
-      {user ? (<ChatHome />) : (
+      {user ? (
+        <ChatHome />
+      ) : (
         <div className="login-container">
           <h1>Welcome to InstaChat..</h1>
           <p>Chat with your friends and family anytime, anywhere.</p>
           <div>
             <button onClick={handleLogin}>Log in with Google</button>
           </div>
-        </div>)
-      }
+        </div>
+      )}
     </>
   );
 }
