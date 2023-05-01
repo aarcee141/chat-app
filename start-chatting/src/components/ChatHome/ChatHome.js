@@ -82,8 +82,8 @@ function ChatHome() {
             null
           ),
         ]);
+        notificationSound.play();
       }
-      notificationSound.play();
     }
   }, [lastMessage]);
 
