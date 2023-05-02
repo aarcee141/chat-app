@@ -39,6 +39,25 @@ function ChatHome() {
     }
   }, [auth.currentUser, navigate]);
 
+  // Filter users to only have the users which have sent/recieved a message to currentUser
+  const filteredUsersList = usersList
+    ? usersList.filter((user) => {
+      if (
+        messages &&
+        messages.some(
+          (message) =>
+            (message.sender === user.email &&
+              message.receiver === auth.currentUser.email) ||
+            (message.sender === auth.currentUser.email &&
+              message.receiver === user.email)
+        )
+      ) {
+        return true;
+      }
+      return false;
+    })
+    : null;
+
   const subscribeRequest = {
     from: auth.currentUser ? auth.currentUser.email : "example123@gmail.com",
     messageType: "subscribe",
@@ -97,7 +116,7 @@ function ChatHome() {
         />
       )}
       <UsersList
-        users={usersList}
+        users={filteredUsersList}
         setSelectedUser={setSelectedUser}
       ></UsersList>
       {selectedUser ? (
