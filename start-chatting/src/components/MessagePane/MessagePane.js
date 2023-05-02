@@ -12,6 +12,11 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiPickerRef = useRef(null);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutsideEmojiPicker);
@@ -19,6 +24,10 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
       document.removeEventListener("click", handleClickOutsideEmojiPicker);
     };
   }, []);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleClickOutsideEmojiPicker = (event) => {
     const emojiButton = document.querySelector(".emoji-button");
@@ -91,6 +100,7 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
                 ))}
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
           <div className="message-input-container">
             <input
