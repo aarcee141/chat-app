@@ -49,5 +49,6 @@ chat-server/mongodb_config.json
 
 # AWS S3 config.
 login-server/s3/aws_s3_config.json
+login-server/js/s3/aws_s3_config.json
 
 
