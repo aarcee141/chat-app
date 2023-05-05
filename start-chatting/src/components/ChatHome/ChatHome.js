@@ -91,7 +91,7 @@ function ChatHome() {
       var data = JSON.parse(lastMessage.data);
 
       if (data.messageType === "message") {
-        setMessages([
+        setMessages((messages) => [
           ...messages,
           new MessageModel(
             data.message,

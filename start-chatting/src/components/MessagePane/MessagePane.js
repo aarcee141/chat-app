@@ -57,7 +57,7 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
         clientMessageId: String(Date.now()),
       };
       sendMessage(JSON.stringify(messageRequest));
-      setMessages([
+      setMessages((messages) => [
         ...messages,
         new MessageModel(
           messageRequest.message,
@@ -67,6 +67,17 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
           null,
         ),
       ]);
+      
+      // setMessages([
+      //   ...messages,
+      //   new MessageModel(
+      //     messageRequest.message,
+      //     messageRequest.from,
+      //     messageRequest.to,
+      //     new Date().toISOString(),
+      //     null,
+      //   ),
+      // ]);
       setMessageInput("");
     }
   };
