@@ -54,7 +54,19 @@
   --light-gray: #f2f2f2;
 }
 
-
 .user-email {
   font-size: 0.8rem;
+}
+
+.unread-messages-count {
+  background-color: #007bff;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  height: 20px;
+  line-height: 20px;
+  margin-left: 10px;
+  text-align: center;
+  width: 20px;
 }

@@ -5,9 +5,15 @@ import Message from "../Message/Message";
 import firebase from "firebase/compat/app";
 import "./MessagePane.css";
 import MessageModel from "../../models/MessageModel";
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker from "emoji-picker-react";
 
-function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) {
+function MessagePane({
+  user,
+  currentUser,
+  messages,
+  setMessages,
+  sendMessage,
+}) {
   const [messageInput, setMessageInput] = useState("");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -31,8 +37,10 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
 
   const handleClickOutsideEmojiPicker = (event) => {
     const emojiButton = document.querySelector(".emoji-button");
-    const isEmojiButtonClicked = emojiButton && emojiButton.contains(event.target);
-    const isEmojiPickerClicked = emojiPickerRef.current && emojiPickerRef.current.contains(event.target);
+    const isEmojiButtonClicked =
+      emojiButton && emojiButton.contains(event.target);
+    const isEmojiPickerClicked =
+      emojiPickerRef.current && emojiPickerRef.current.contains(event.target);
 
     if (isEmojiButtonClicked || isEmojiPickerClicked) {
       return;
@@ -47,7 +55,6 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
 
   const handleSendClick = async () => {
     if (messageInput.trim() !== "") {
-
       const messageRequest = {
         from: firebase.auth().currentUser.email,
         to: user.email,
@@ -64,20 +71,9 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
           messageRequest.from,
           messageRequest.to,
           new Date().toISOString(),
-          null,
+          null
         ),
       ]);
-      
-      // setMessages([
-      //   ...messages,
-      //   new MessageModel(
-      //     messageRequest.message,
-      //     messageRequest.from,
-      //     messageRequest.to,
-      //     new Date().toISOString(),
-      //     null,
-      //   ),
-      // ]);
       setMessageInput("");
     }
   };
@@ -89,7 +85,7 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
 
   const toggleEmojiPicker = () => {
     setShowEmojiPicker(!showEmojiPicker);
-  }
+  };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -107,7 +103,12 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
             {messages && (
               <div>
                 {messages.map((message) => (
-                  <Message key={message.id} currentUser={currentUser} selectedUser={user} message={message} />
+                  <Message
+                    key={message.id}
+                    currentUser={currentUser}
+                    selectedUser={user}
+                    message={message}
+                  />
                 ))}
               </div>
             )}
@@ -122,7 +123,11 @@ function MessagePane({ user, currentUser, messages, setMessages, sendMessage }) 
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
             />
-            <div ref={emojiPickerRef} className="emoji-picker" style={{ display: showEmojiPicker ? 'block' : 'none' }}>
+            <div
+              ref={emojiPickerRef}
+              className="emoji-picker"
+              style={{ display: showEmojiPicker ? "block" : "none" }}
+            >
               <EmojiPicker onEmojiClick={onEmojiClick} />
             </div>
             <button className="send-button" onClick={handleSendClick}>

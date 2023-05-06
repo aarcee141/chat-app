@@ -3,7 +3,7 @@ import getUsersList from "../../services/GetUserList";
 import UserPreview from "../UserPreview/UserPreview";
 import "./UsersList.css";
 
-function UsersList({ users, setSelectedUser }) {
+function UsersList({ users, setSelectedUser, emailToUnreadMessagesCount }) {
   return (
     <div className="user-list-container">
       <ul className="user-list">
@@ -13,6 +13,9 @@ function UsersList({ users, setSelectedUser }) {
               <UserPreview
                 user={user}
                 setSelectedUser={setSelectedUser}
+                unReadMessagesCount={
+                  emailToUnreadMessagesCount.get(user.email) ?? 0
+                }
               ></UserPreview>
             ))}
           </div>

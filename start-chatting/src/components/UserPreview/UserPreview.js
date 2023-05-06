@@ -3,7 +3,7 @@ import "./UserPreview.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
-function UserPreview({ user, setSelectedUser }) {
+function UserPreview({ user, setSelectedUser, unReadMessagesCount }) {
   const handleClick = () => {
     setSelectedUser(user);
   };
@@ -23,6 +23,9 @@ function UserPreview({ user, setSelectedUser }) {
         <span className="user-name">{user.name}</span>
         <span className="user-email">{user.email}</span>
       </div>
+      {unReadMessagesCount > 0 && (
+        <div className="unread-messages-count">{unReadMessagesCount}</div>
+      )}
     </div>
   );
 }

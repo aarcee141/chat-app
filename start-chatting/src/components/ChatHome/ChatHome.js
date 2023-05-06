@@ -16,6 +16,9 @@ function ChatHome() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [usersList, setUsersList] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [emailToUnreadMessagesCount, setEmailToUnreadMessagesCount] = useState(
+    new Map()
+  );
   const navigate = useNavigate();
 
   function getCurrentUser(usersList) {
@@ -87,6 +90,26 @@ function ChatHome() {
     );
   }
 
+  // Get unread messages for each user to display it on the left pane of user list.
+  function getEmailToUnreadMessagesCount() {
+    if (usersList == null || messages == null) return new Map();
+
+    var getNoOfUnreadMessages = (user) => {
+      return messages.filter(
+        (message) =>
+          message.sender === user.email &&
+          new Date(message.sentTime) >
+            new Date(localStorage.getItem(user.email))
+      ).length;
+    };
+
+    const map = new Map();
+    usersList.forEach((user) => {
+      map.set(user.email, getNoOfUnreadMessages(user));
+    });
+    return map;
+  }
+
   useEffect(() => {
     if (!auth.currentUser) {
       navigate("/");
@@ -106,6 +129,20 @@ function ChatHome() {
       shouldReconnect: (closeEvent) => true,
     }
   );
+
+  useEffect(() => {
+    if (messages && usersList) {
+      setEmailToUnreadMessagesCount(getEmailToUnreadMessagesCount());
+    }
+  }, [messages, usersList]);
+
+  useEffect(() => {
+    // set timestamp in local storage
+    if (selectedUser != null) {
+      localStorage.setItem(selectedUser.email, new Date().toISOString());
+      setEmailToUnreadMessagesCount(getEmailToUnreadMessagesCount());
+    }
+  }, [selectedUser]);
 
   // Append the messages with the last message received by the user and make
   // a notification sound.
@@ -142,6 +179,7 @@ function ChatHome() {
       <UsersList
         users={getFilteredUsersList()}
         setSelectedUser={setSelectedUser}
+        emailToUnreadMessagesCount={emailToUnreadMessagesCount}
       ></UsersList>
       {selectedUser ? (
         <MessagePane
