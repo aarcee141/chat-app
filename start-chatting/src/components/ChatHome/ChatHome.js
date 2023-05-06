@@ -14,13 +14,41 @@ function ChatHome() {
   const auth = firebase.auth();
   const [messages, setMessages] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedUserMessages, setSelectedUserMessages] = useState(null);
   const [usersList, setUsersList] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
   function getCurrentUser(usersList) {
     return usersList.find((user) => user.email === auth.currentUser?.email);
+  }
+
+  // Get all messages for the selected users in the users list.
+  function getSelectedUserMessages() {
+    if (messages == null) return [];
+
+    return messages.filter((message) => {
+      return (
+        (message.receiver === selectedUser.email &&
+          message.sender === auth.currentUser.email) ||
+        (message.sender === selectedUser.email &&
+          message.receiver === auth.currentUser.email)
+      );
+    });
+  }
+
+  // Filter users to only have the users which have sent/recieved a message to currentUser.
+  function getFilteredUsersList() {
+    if (usersList == null || messages == null) return [];
+
+    return usersList.filter((user) =>
+      messages.some(
+        (message) =>
+          (message.sender === user.email &&
+            message.receiver === auth.currentUser.email) ||
+          (message.sender === auth.currentUser.email &&
+            message.receiver === user.email)
+      )
+    );
   }
 
   useEffect(() => {
@@ -39,25 +67,6 @@ function ChatHome() {
     }
   }, [auth.currentUser, navigate]);
 
-  // Filter users to only have the users which have sent/recieved a message to currentUser
-  const filteredUsersList = usersList
-    ? usersList.filter((user) => {
-      if (
-        messages &&
-        messages.some(
-          (message) =>
-            (message.sender === user.email &&
-              message.receiver === auth.currentUser.email) ||
-            (message.sender === auth.currentUser.email &&
-              message.receiver === user.email)
-        )
-      ) {
-        return true;
-      }
-      return false;
-    })
-    : null;
-
   const subscribeRequest = {
     from: auth.currentUser ? auth.currentUser.email : "example123@gmail.com",
     messageType: "subscribe",
@@ -70,21 +79,8 @@ function ChatHome() {
     }
   );
 
-  useEffect(() => {
-    if (selectedUser != null && messages != null) {
-      setSelectedUserMessages(
-        messages.filter((message) => {
-          return (
-            (message.receiver === selectedUser.email &&
-              message.sender === auth.currentUser.email) ||
-            (message.sender === selectedUser.email &&
-              message.receiver === auth.currentUser.email)
-          );
-        })
-      );
-    }
-  }, [selectedUser, messages]);
-
+  // Append the messages with the last message received by the user and make
+  // a notification sound.
   useEffect(() => {
     const notificationSound = new Audio("Message - Notification.mp3");
     if (lastMessage != null && lastMessage.data.length > 0) {
@@ -116,7 +112,7 @@ function ChatHome() {
         />
       )}
       <UsersList
-        users={filteredUsersList}
+        users={getFilteredUsersList()}
         setSelectedUser={setSelectedUser}
       ></UsersList>
       {selectedUser ? (
@@ -124,7 +120,7 @@ function ChatHome() {
           user={selectedUser}
           currentUser={currentUser}
           setMessages={setMessages}
-          messages={selectedUserMessages}
+          messages={getSelectedUserMessages()}
           sendMessage={sendMessage}
         ></MessagePane>
       ) : (
