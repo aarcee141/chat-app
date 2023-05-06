@@ -22,16 +22,51 @@ function ChatHome() {
     return usersList.find((user) => user.email === auth.currentUser?.email);
   }
 
+  function initialize() {
+    getUsersList().then((users) => {
+      // Set current user.
+      setCurrentUser(getCurrentUser(users));
+      // Set users list.
+      setUsersList(
+        // Filter out the current user before setting users list.
+        users.filter((user) => user.email !== auth.currentUser.email)
+      );
+    });
+
+    // Set messages.
+    getMessages().then((messages) => setMessages(messages));
+  }
+
   // Get all messages for the selected users in the users list.
-  function getSelectedUserMessages() {
+  function getUserMessages(user) {
     if (messages == null) return [];
 
     return messages.filter((message) => {
       return (
-        (message.receiver === selectedUser.email &&
+        (message.receiver === user.email &&
           message.sender === auth.currentUser.email) ||
-        (message.sender === selectedUser.email &&
+        (message.sender === user.email &&
           message.receiver === auth.currentUser.email)
+      );
+    });
+  }
+
+  // Sort the users list based on the most recent messages sent or received for that user.
+  function sortUsersListByLastMessage() {
+    if (usersList == null || messages == null) return [];
+
+    var getMostRecentMessageTimeStamp = (messages) => {
+      return messages.reduce((latestTimestamp, message) => {
+        return new Date(message.sentTime) > new Date(latestTimestamp)
+          ? message.sentTime
+          : latestTimestamp;
+      }, "0000-01-01T00:00:00.000Z");
+    };
+
+    usersList.sort((a, b) => {
+      return (
+        new Date(getMostRecentMessageTimeStamp(getUserMessages(b))) -
+        new Date(getMostRecentMessageTimeStamp(getUserMessages(a)))
       );
     });
   }
@@ -40,6 +75,7 @@ function ChatHome() {
   function getFilteredUsersList() {
     if (usersList == null || messages == null) return [];
 
+    sortUsersListByLastMessage();
     return usersList.filter((user) =>
       messages.some(
         (message) =>
@@ -55,15 +91,7 @@ function ChatHome() {
     if (!auth.currentUser) {
       navigate("/");
     } else {
-      getUsersList().then((users) => {
-        setCurrentUser(getCurrentUser(users));
-        // Filter out the current user.
-        const filteredUsers = users.filter(
-          (user) => user.email !== auth.currentUser.email
-        );
-        setUsersList(filteredUsers);
-      });
-      getMessages().then((messages) => setMessages(messages));
+      initialize();
     }
   }, [auth.currentUser, navigate]);
 
@@ -120,7 +148,7 @@ function ChatHome() {
           user={selectedUser}
           currentUser={currentUser}
           setMessages={setMessages}
-          messages={getSelectedUserMessages()}
+          messages={getUserMessages(selectedUser)}
           sendMessage={sendMessage}
         ></MessagePane>
       ) : (
