@@ -8,6 +8,9 @@ function EditProfile() {
     const auth = firebase.auth();
     const navigate = useNavigate();
     const [file, setFile] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [uploadPercentage, setUploadPercentage] = useState(0);
+
 
     const handleFileChange = (e) => {
         if (e.target.files[0]) {
@@ -27,8 +30,12 @@ function EditProfile() {
 
     const handleUpdateProfilePic = async () => {
         if (file) {
-            await uploadProfilePic(file);
-            navigate("/");
+            let resp = await uploadProfilePic(file);
+            if (resp.status === "success") {
+                navigate("/");
+            } else {
+                setErrorMessage(resp.message)
+            }
         }
     };
 
@@ -40,6 +47,7 @@ function EditProfile() {
                     <span>Upload Profile Picture:</span>
                     <input type="file" onChange={handleFileChange} />
                 </label>
+                <label>{errorMessage}</label>
             </div>
             <div className="edit-profile-button-container">
                 <button className="save-changes-button" onClick={handleUpdateProfilePic}>

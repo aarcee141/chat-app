@@ -1,5 +1,4 @@
 import axios from "axios";
-import UserModel from "../models/UserModel";
 import firebase from "firebase/compat/app";
 
 async function uploadProfilePic(file) {
@@ -18,6 +17,7 @@ async function uploadProfilePic(file) {
         },
       }
     );
+    return response.data;
   } catch (error) {
     console.error(error);
   }
